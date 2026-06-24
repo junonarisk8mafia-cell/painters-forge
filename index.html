@@ -1,0 +1,2095 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>PAINTER'S FORGE</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --navy:#0f1521;
+  --navy2:#1a2744;
+  --navy3:#243460;
+  --orange:#E8580A;
+  --orange2:#FF8C42;
+  --yellow:#F6D860;
+  --blue:#1E5799;
+  --blue2:#3A7BD5;
+  --green:#1A7A4A;
+  --red:#C0392B;
+  --white:#fff;
+  --text:#fff;
+  --text2:rgba(255,255,255,0.75);
+  --text3:rgba(255,255,255,0.5);
+  --border:rgba(255,255,255,0.12);
+  --card:#1e2d4a;
+}
+html,body{height:100%;background:#0f1521;font-family:Arial,sans-serif;color:#fff;overflow:hidden}
+#root{height:100%;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative;overflow:hidden}
+
+/* ── HEADER ── */
+.hdr{
+  background:var(--navy2);
+  padding:12px 16px 10px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.logo{font-size:17px;font-weight:900;letter-spacing:0.06em;color:#fff}
+.logo span{color:var(--yellow)}
+.lang-wrap{display:flex;gap:4px}
+.lang-btn{background:transparent;border:1px solid rgba(255,255,255,0.2);color:var(--text2);font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;cursor:pointer;transition:all 0.15s}
+.lang-btn.on{background:var(--yellow);border-color:var(--yellow);color:var(--navy2)}
+
+/* ── NAV ── */
+.nav{
+  background:var(--navy2);
+  display:flex;
+  border-top:1px solid var(--border);
+  flex-shrink:0;
+  order:99;
+}
+.nav-btn{flex:1;background:transparent;border:none;color:var(--text3);font-size:12px;font-weight:700;padding:8px 2px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;transition:all 0.15s;letter-spacing:0.03em}
+.nav-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nav-btn.on{color:var(--yellow)}
+.nav-dot{width:4px;height:4px;border-radius:50%;background:transparent;transition:background 0.15s}
+.nav-btn.on .nav-dot{background:var(--yellow)}
+
+/* ── PAGES ── */
+.pages{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:#0f1521}
+.page{display:none;padding-bottom:16px;animation:fadeUp 0.2s ease;background:#0f1521}
+.page.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── HOME ── */
+.hero{
+  background:linear-gradient(160deg,var(--navy2) 0%,#1a3060 100%);
+  padding:20px 16px 16px;
+  display:flex;gap:14px;align-items:center;
+  border-bottom:1px solid var(--border);
+}
+.hero-text{flex:1}
+.hero-badge{display:inline-block;background:var(--orange);color:#fff;font-size:11px;font-weight:900;padding:3px 10px;border-radius:20px;margin-bottom:8px;letter-spacing:0.06em}
+.hero-title{font-size:20px;font-weight:900;line-height:1.25;margin-bottom:6px}
+.hero-title span{color:var(--yellow)}
+.hero-sub{font-size:13px;color:var(--text2);line-height:1.6}
+.hero-char{flex-shrink:0;position:relative}
+.hero-char svg{filter:drop-shadow(0 4px 16px rgba(232,88,10,0.4))}
+
+.xp-bar-wrap{padding:12px 16px 4px;background:#0f1521}
+.xp-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.xp-label{font-size:12px;color:var(--text3);font-weight:700;letter-spacing:0.06em}
+.xp-val{font-size:13px;color:var(--yellow);font-weight:700}
+.xp-track{height:6px;background:rgba(255,255,255,0.15);border-radius:3px;overflow:hidden}
+.xp-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--orange),var(--yellow));transition:width 1s cubic-bezier(.22,1,.36,1)}
+
+.mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px 4px}
+.mod-card{
+  background:#1e2d4a;border:1px solid rgba(255,255,255,0.12);
+  border-radius:14px;padding:14px 12px;cursor:pointer;
+  transition:all 0.18s;display:flex;flex-direction:column;gap:7px;
+  position:relative;overflow:hidden;
+}
+.mod-card:active{transform:scale(0.97)}
+.mod-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.03),transparent);pointer-events:none}
+.mod-card.c-orange{border-color:rgba(232,88,10,0.3)}
+.mod-card.c-red{border-color:rgba(192,57,43,0.3)}
+.mod-card.c-green{border-color:rgba(26,122,74,0.3)}
+.mod-card.c-blue{border-color:rgba(30,87,153,0.3)}
+.mod-icon{font-size:24px;line-height:1}
+.mod-card h3{font-size:14px;font-weight:700;color:#fff;line-height:1.3}
+.mod-card p{font-size:12px;color:var(--text2);line-height:1.4}
+.mod-arrow{position:absolute;right:10px;bottom:10px;font-size:14px;color:var(--text3)}
+
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:4px 16px 0}
+.stat-c{background:#1e2d4a;border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:10px 6px;text-align:center}
+.stat-n{font-size:18px;font-weight:900;color:#fff;text-shadow:0 0 10px rgba(246,216,96,0.3)}
+.stat-l{font-size:11px;color:var(--text3);margin-top:2px;font-weight:700;letter-spacing:0.04em}
+
+/* ── COLOR MIXING ── */
+.sec-hdr{display:flex;align-items:center;gap:8px;padding:14px 16px 8px}
+.sec-hdr svg{width:22px;height:22px;stroke:var(--orange);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sec-hdr h2{font-size:15px;font-weight:900}
+
+.target-card{margin:0 16px 12px;border-radius:14px;border:1px solid var(--border);overflow:hidden}
+.target-top{background:#1e2d4a;padding:8px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.target-top span{font-size:12px;color:var(--text3);font-weight:700;letter-spacing:0.05em}
+.target-top strong{font-size:14px;color:#fff;font-weight:700}
+.target-swatch{height:72px;transition:background 0.4s}
+
+.mixer-card{background:#1e2d4a;border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:14px;margin:0 16px 10px}
+.mix-row{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.mix-row:last-child{margin-bottom:0}
+.cdot{width:18px;height:18px;border-radius:50%;flex-shrink:0;border:1px solid rgba(255,255,255,0.15)}
+.mix-row label{font-size:13px;color:var(--text2);width:54px;flex-shrink:0;font-weight:700}
+.mix-row input[type=range]{flex:1;accent-color:var(--orange);cursor:pointer}
+.pct-val{font-size:13px;font-weight:700;color:#fff;width:32px;text-align:right}
+
+.result-card{margin:0 16px 8px;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+.result-swatches{display:flex;height:64px}
+.swatch-half{flex:1;display:flex;align-items:center;justify-content:center}
+.swatch-half span{font-size:9px;font-weight:700;background:rgba(0,0,0,0.3);color:#fff;padding:2px 8px;border-radius:10px;letter-spacing:0.04em;text-transform:uppercase}
+
+.score-wrap{padding:0 16px 4px}
+.score-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.score-top span{font-size:13px;color:var(--text3);font-weight:700;letter-spacing:0.05em}
+.score-top strong{font-size:20px;font-weight:900;color:#fff}
+.score-track{height:7px;background:rgba(255,255,255,0.15);border-radius:4px;overflow:hidden}
+.score-fill{height:100%;border-radius:4px;transition:width 0.5s ease,background 0.3s}
+.score-msg{text-align:center;padding:7px;font-size:13px;color:var(--text2)}
+
+/* Pinto reaction in color page */
+.pinto-react{display:flex;flex-direction:column;align-items:center;padding:4px 0 0}
+.pinto-react svg{transition:filter 0.4s}
+.pinto-speech{font-size:11px;color:var(--text2);text-align:center;margin-top:4px;min-height:18px;font-style:italic}
+
+.next-btn{
+  display:block;width:calc(100% - 32px);margin:2px 16px 0;
+  background:linear-gradient(135deg,var(--orange),#C44A08);
+  color:#fff;border:none;border-radius:12px;padding:13px;
+  font-size:14px;font-weight:900;cursor:pointer;
+  letter-spacing:0.04em;transition:opacity 0.15s;
+}
+.next-btn:active{opacity:0.85}
+
+/* ── SAFETY ── */
+.safety-list{padding:0 16px}
+.safety-item{
+  background:#1e2d4a;border:1px solid rgba(255,255,255,0.12);
+  border-radius:14px;padding:14px;margin-bottom:10px;
+  display:flex;gap:12px;align-items:flex-start;
+}
+.s-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.s-body h3{font-size:15px;font-weight:700;color:#fff;margin-bottom:4px}
+.s-body p{font-size:13px;color:var(--text2);line-height:1.6}
+.s-tag{display:inline-block;font-size:11px;font-weight:900;padding:2px 9px;border-radius:10px;margin-top:7px;letter-spacing:0.05em}
+
+/* ── QUIZ ── */
+.quiz-prog{display:flex;align-items:center;gap:10px;padding:0 16px;margin-bottom:6px}
+.q-meta{display:flex;gap:6px;margin-bottom:8px;align-items:center}
+.q-cat{font-size:12px;font-weight:700;background:rgba(232,88,10,0.2);color:#E8580A;border:1px solid rgba(232,88,10,0.3);padding:2px 9px;border-radius:6px;letter-spacing:0.04em}
+.q-lv{font-size:12px;font-weight:700;background:rgba(246,216,96,0.12);color:#F6D860;border:1px solid rgba(246,216,96,0.2);padding:2px 9px;border-radius:6px;letter-spacing:0.04em}
+.q-num{font-size:10px;color:var(--text3);font-weight:700;letter-spacing:0.04em}
+.prog-track{flex:1;height:4px;background:rgba(255,255,255,0.18);border-radius:2px}
+.prog-fill{height:100%;border-radius:2px;background:var(--orange);transition:width 0.4s}
+
+.quiz-card{background:#1e2d4a;border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:16px;margin:0 16px 10px}
+.scenario{background:rgba(255,255,255,0.06);border-left:3px solid var(--orange);border-radius:0 10px 10px 0;padding:10px 12px;font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:12px}
+.q-text{font-size:15px;font-weight:700;color:#fff;line-height:1.5;margin-bottom:12px}
+.choices{display:flex;flex-direction:column;gap:7px}
+.choice{
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);
+  border-radius:10px;padding:13px 14px;cursor:pointer;
+  display:flex;align-items:center;gap:10px;text-align:left;
+  font-size:14px;color:rgba(255,255,255,0.85);transition:all 0.15s;
+}
+.choice:active:not(:disabled){transform:scale(0.98)}
+.c-letter{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:var(--text3);flex-shrink:0}
+.choice.correct{background:rgba(26,122,74,0.15);border-color:rgba(26,122,74,0.5);color:#fff}
+.choice.correct .c-letter{background:var(--green);border-color:var(--green);color:#fff}
+.choice.wrong{background:rgba(192,57,43,0.12);border-color:rgba(192,57,43,0.4);color:var(--text2)}
+.choice.wrong .c-letter{background:var(--red);border-color:var(--red);color:#fff}
+.choice:disabled{cursor:default}
+.explain{background:rgba(26,122,74,0.18);border:1px solid rgba(26,122,74,0.35);border-radius:10px;padding:11px 13px;font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7;margin-top:10px;display:none}
+.explain.on{display:block}
+.next-q{display:none;width:100%;margin-top:10px;background:#243460;color:#fff;border:1px solid rgba(255,255,255,0.18);border-radius:10px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;transition:background 0.15s}
+.next-q.on{display:block}
+.next-q:active{background:var(--navy2)}
+
+/* Pinto reaction float */
+.pinto-float{
+  position:fixed;right:12px;bottom:72px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  pointer-events:none;transition:opacity 0.3s,transform 0.3s;
+  z-index:10;
+}
+.pinto-float.hide{opacity:0;transform:translateY(8px)}
+.pinto-bubble{
+  background:var(--navy2);border:1px solid var(--border);
+  border-radius:10px 10px 10px 2px;padding:6px 10px;
+  font-size:10px;color:var(--text2);font-style:italic;
+  max-width:110px;text-align:center;line-height:1.5;
+  box-shadow:0 4px 16px rgba(0,0,0,0.4);
+}
+
+/* Score result overlay */
+.result-overlay{
+  position:fixed;inset:0;background:rgba(10,16,32,0.9);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:50;opacity:0;pointer-events:none;transition:opacity 0.3s;padding:24px;
+}
+.result-overlay.on{opacity:1;pointer-events:all}
+.result-big{font-size:52px;font-weight:900;color:var(--yellow);line-height:1;margin-bottom:6px;text-shadow:0 0 30px rgba(246,216,96,0.5)}
+.result-label{font-size:13px;color:var(--text2);margin-bottom:20px;letter-spacing:0.04em}
+.result-msg{font-size:15px;font-weight:700;color:#fff;text-align:center;margin-bottom:24px;line-height:1.5}
+.result-close{background:linear-gradient(135deg,var(--orange),#C44A08);color:#fff;border:none;border-radius:12px;padding:13px 32px;font-size:14px;font-weight:900;cursor:pointer;letter-spacing:0.04em}
+
+
+
+
+/* ── HINT SYSTEM ── */
+.diff-tabs{display:flex;gap:6px;padding:0 16px 10px}
+.diff-btn{flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:7px 4px;font-size:10px;font-weight:700;color:rgba(255,255,255,0.45);cursor:pointer;transition:all 0.15s;letter-spacing:0.03em}
+.diff-btn.on{border-color:var(--orange);color:var(--orange);background:rgba(232,88,10,0.12)}
+.diff-btn.mid.on{border-color:#3A7BD5;color:#3A7BD5;background:rgba(58,123,213,0.12)}
+.diff-btn.adv.on{border-color:#F6D860;color:#F6D860;background:rgba(246,216,96,0.1)}
+
+.hint-area{padding:0 16px 6px}
+.hint-steps{display:flex;flex-direction:column;gap:6px}
+.hint-step{
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  border-radius:10px;overflow:hidden;
+}
+.hint-step-btn{font-size:13px;
+  width:100%;background:transparent;border:none;color:rgba(255,255,255,0.6);
+  font-size:11px;font-weight:700;padding:9px 14px;cursor:pointer;
+  display:flex;align-items:center;gap:8px;text-align:left;
+}
+.hint-step-btn .hint-num{
+  width:20px;height:20px;border-radius:50%;
+  background:rgba(232,88,10,0.2);border:1px solid rgba(232,88,10,0.4);
+  color:#E8580A;font-size:10px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.hint-step-btn .hint-num.opened{background:#E8580A;color:#fff;border-color:#E8580A}
+.hint-arrow{margin-left:auto;font-size:12px;transition:transform 0.2s;color:rgba(255,255,255,0.3)}
+.hint-step-btn.open .hint-arrow{transform:rotate(90deg)}
+.hint-content{
+  max-height:0;overflow:hidden;transition:max-height 0.3s ease;
+  padding:0 14px;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.7;
+}
+.hint-content.open{max-height:120px;padding:0 14px 10px}
+
+.answer-reveal{
+  margin:0 16px 8px;background:rgba(26,122,74,0.12);
+  border:1px solid rgba(26,122,74,0.3);border-radius:12px;
+  overflow:hidden;
+}
+.answer-reveal-btn{
+  width:100%;background:transparent;border:none;
+  color:#2ECC71;font-size:14px;font-weight:700;
+  padding:11px 14px;cursor:pointer;display:flex;align-items:center;gap:8px;
+}
+.answer-reveal-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+.answer-content{display:none;padding:0 14px 12px}
+.answer-content.show{display:block}
+.answer-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.answer-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.answer-row span{font-size:13px;color:rgba(255,255,255,0.7)}
+.answer-row strong{color:#fff;margin-left:auto;font-size:14px}
+.apply-btn{
+  display:block;width:100%;margin-top:8px;
+  background:rgba(26,122,74,0.3);border:1px solid rgba(26,122,74,0.4);
+  color:#2ECC71;font-size:13px;font-weight:700;border-radius:8px;
+  padding:8px;cursor:pointer;
+}
+
+.diff-label{
+  display:inline-block;font-size:9px;font-weight:900;padding:2px 8px;
+  border-radius:10px;margin-left:8px;letter-spacing:0.05em;vertical-align:middle;
+}
+.diff-label.easy{background:rgba(232,88,10,0.2);color:#E8580A}
+.diff-label.mid{background:rgba(58,123,213,0.2);color:#3A7BD5}
+.diff-label.adv{background:rgba(246,216,96,0.15);color:#F6D860}
+
+/* ── DICT ── */
+.dict-cat-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);cursor:pointer;transition:all 0.15s;letter-spacing:0.04em}
+.dict-cat-btn.on{background:rgba(232,88,10,0.2);border-color:rgba(232,88,10,0.5);color:#E8580A}
+.dict-card{background:#1e2d4a;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all 0.15s}
+.dict-card:active{transform:scale(0.98)}
+.dict-sub{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:7px;line-height:1.4}
+.dict-rom{color:#E8580A;font-style:italic;font-size:12px;margin-left:4px}
+.dict-top{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.dict-ja{font-size:18px;font-weight:900;color:#fff}
+.dict-en{font-size:11px;color:#E8580A;font-weight:700}
+.dict-cat-tag{font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;background:rgba(246,216,96,0.1);color:#F6D860;border:1px solid rgba(246,216,96,0.2);margin-left:auto;white-space:nowrap}
+.dict-body{font-size:13px;color:rgba(255,255,255,0.55);line-height:1.65}
+.dict-expand{max-height:0;overflow:hidden;transition:max-height 0.3s ease}
+.dict-expand.open{max-height:200px}
+.dict-example{margin-top:6px;padding:7px 10px;background:rgba(255,255,255,0.04);border-left:2px solid #E8580A;border-radius:0 6px 6px 0;font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6;font-style:italic}
+.dict-empty{text-align:center;padding:40px 20px;color:rgba(255,255,255,0.3);font-size:13px}
+
+/* ── ROADMAP ── */
+.road-intro{font-size:11px;color:rgba(255,255,255,0.55);line-height:1.6;margin-bottom:16px;padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:10px;border-left:3px solid #E8580A}
+.road-step{position:relative;margin-bottom:0}
+.road-connector{width:2px;height:20px;background:linear-gradient(180deg,rgba(255,255,255,0.15),rgba(255,255,255,0.05));margin:0 auto;position:relative;left:28px}
+.road-card{
+  display:flex;gap:12px;align-items:flex-start;
+  background:#1e2d4a;border:1px solid rgba(255,255,255,0.1);
+  border-radius:14px;padding:14px;position:relative;overflow:hidden;
+}
+.road-card.highlight{border-color:rgba(232,88,10,0.5);background:rgba(232,88,10,0.08)}
+.road-card.gold{border-color:rgba(246,216,96,0.5);background:rgba(246,216,96,0.06)}
+.road-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.road-card.lv1::before{background:linear-gradient(90deg,#4A90D9,transparent)}
+.road-card.lv2::before{background:linear-gradient(90deg,#E8580A,transparent)}
+.road-card.lv3::before{background:linear-gradient(90deg,#1A7A4A,transparent)}
+.road-card.lv4::before{background:linear-gradient(90deg,#F6D860,transparent)}
+.road-card.lv5::before{background:linear-gradient(90deg,#9B59B6,transparent)}
+.road-badge{
+  width:52px;height:52px;border-radius:12px;flex-shrink:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+}
+.road-badge .badge-icon{font-size:22px;line-height:1}
+.road-badge .badge-lv{font-size:8px;font-weight:900;letter-spacing:0.06em;color:rgba(255,255,255,0.5)}
+.road-info{flex:1;min-width:0}
+.road-name{font-size:16px;font-weight:900;color:#fff;margin-bottom:2px}
+.road-sub{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:8px;line-height:1.4}
+.road-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.road-tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;letter-spacing:0.04em}
+.road-tag.exp{background:rgba(58,123,213,0.2);color:#3A7BD5;border:1px solid rgba(58,123,213,0.3)}
+.road-tag.cost{background:rgba(26,122,74,0.2);color:#2ECC71;border:1px solid rgba(26,122,74,0.3)}
+.road-tag.pass{background:rgba(232,88,10,0.2);color:#FF8C42;border:1px solid rgba(232,88,10,0.3)}
+.road-tag.time{background:rgba(155,89,182,0.2);color:#BB8FCE;border:1px solid rgba(155,89,182,0.3)}
+.road-detail{font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6;border-top:1px solid rgba(255,255,255,0.07);padding-top:7px;margin-top:2px}
+.road-pinto{position:absolute;right:10px;bottom:8px;opacity:0.6}
+.road-cost-break{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.cost-item{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:6px 10px;font-size:11px;color:rgba(255,255,255,0.55);line-height:1.4}
+.cost-item strong{display:block;font-size:12px;color:#fff;font-weight:700}
+.road-tip{margin-top:14px;background:rgba(246,216,96,0.06);border:1px solid rgba(246,216,96,0.2);border-radius:10px;padding:10px 12px;font-size:10px;color:rgba(255,255,255,0.55);line-height:1.7}
+.road-tip strong{color:#F6D860}
+
+/* ── PINTO FULL SVG (inline reusable) ── */
+/* Lv based on #pinto-lv attr */
+</style>
+</head>
+<body>
+<div id="root">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="logo">PAINTER'S <span>FORGE</span></div>
+    <div class="lang-wrap">
+      <button class="lang-btn on" onclick="setLang('ja',this)">日本語</button>
+      <button class="lang-btn" onclick="setLang('en',this)">EN</button>
+    </div>
+  </div>
+
+  <!-- PAGES -->
+  <div class="pages">
+
+    <!-- HOME -->
+    <div class="page on" id="pg-home">
+      <div class="hero">
+        <div class="hero-text">
+          <div class="hero-badge" data-t="hero-badge">塗装職人 トレーニング</div>
+          <div class="hero-title" data-t="hero-title">現場の知識を<br><span>ゲームで学ぶ</span></div>
+          <div class="hero-sub" data-t="hero-sub">調色・安全・資格対策まで<br>日英バイリンガル対応</div>
+        </div>
+        <!-- PINTO mini in hero (Lv based on XP) -->
+        <div class="hero-char" id="hero-pinto"></div>
+      </div>
+
+      <div class="xp-bar-wrap">
+        <div class="xp-top">
+          <span class="xp-label" id="xp-label">PINTO — LV.1 見習い</span>
+          <span class="xp-val" id="xp-val">0 / 100 XP</span>
+        </div>
+        <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+      </div>
+
+      <div class="mod-grid">
+        <div class="mod-card c-orange" onclick="goPage('color')">
+          <div class="mod-icon">🎨</div>
+          <h3 data-t="mod1">調色シミュレーター</h3>
+          <p data-t="mod1s">原色を混ぜて目標色に近づけよう</p>
+          <span class="mod-arrow">→</span>
+        </div>
+        <div class="mod-card c-red" onclick="goPage('safety')">
+          <div class="mod-icon">🦺</div>
+          <h3 data-t="mod2">安全教育</h3>
+          <p data-t="mod2s">PPE・有機溶剤・高所作業</p>
+          <span class="mod-arrow">→</span>
+        </div>
+        <div class="mod-card c-green" onclick="goPage('quiz')">
+          <div class="mod-icon">⚠️</div>
+          <h3 data-t="mod3">災害事例クイズ</h3>
+          <p data-t="mod3s">事故シナリオから正解を選ぶ</p>
+          <span class="mod-arrow">→</span>
+        </div>
+        <div class="mod-card c-blue">
+          <div class="mod-icon">📖</div>
+          <h3 data-t="mod4">専門用語辞典</h3>
+          <p data-t="mod4s">現場スラング・日英対訳</p>
+          <span class="mod-arrow">→</span>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-c"><div class="stat-n">100+</div><div class="stat-l" data-t="st1">収録用語</div></div>
+        <div class="stat-c"><div class="stat-n">70+</div><div class="stat-l" data-t="st2">災害事例</div></div>
+        <div class="stat-c"><div class="stat-n">日/EN</div><div class="stat-l" data-t="st3">バイリンガル</div></div>
+      </div>
+    </div>
+
+    <!-- COLOR MIXING -->
+    <div class="page" id="pg-color">
+      <div class="sec-hdr">
+        <svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+        <h2 data-t="color-title">調色チャレンジ</h2>
+      </div>
+      <div class="diff-tabs">
+        <button class="diff-btn on"    onclick="setDiff('easy')" id="diff-easy" data-t="diff-easy">🟠 入門</button>
+        <button class="diff-btn mid"   onclick="setDiff('mid')"  id="diff-mid"  data-t="diff-mid">🔵 中級</button>
+        <button class="diff-btn adv"   onclick="setDiff('adv')"  id="diff-adv"  data-t="diff-adv">⭐ 上級</button>
+      </div>
+
+      <div class="target-card">
+        <div class="target-top">
+          <span data-t="tgt-lbl">目標の色</span>
+          <strong id="tgt-name">—</strong>
+        </div>
+        <div class="target-swatch" id="tgt-swatch"></div>
+      </div>
+
+      <div class="mixer-card">
+        <div class="mix-row"><div class="cdot" style="background:#E53E3E"></div><label data-t="lR">赤</label><input type="range" min="0" max="100" value="0" step="1" id="sR" oninput="mix()"><div class="pct-val" id="vR">0%</div></div>
+        <div class="mix-row"><div class="cdot" style="background:#F6D860"></div><label data-t="lY">黄</label><input type="range" min="0" max="100" value="0" step="1" id="sY" oninput="mix()"><div class="pct-val" id="vY">0%</div></div>
+        <div class="mix-row"><div class="cdot" style="background:#3182CE"></div><label data-t="lB">青</label><input type="range" min="0" max="100" value="0" step="1" id="sB" oninput="mix()"><div class="pct-val" id="vB">0%</div></div>
+        <div class="mix-row"><div class="cdot" style="background:#fff;border-color:rgba(255,255,255,0.3)"></div><label data-t="lW">白</label><input type="range" min="0" max="100" value="100" step="1" id="sW" oninput="mix()"><div class="pct-val" id="vW">100%</div></div>
+        <div class="mix-row"><div class="cdot" style="background:#2D3748"></div><label data-t="lK">黒</label><input type="range" min="0" max="100" value="0" step="1" id="sK" oninput="mix()"><div class="pct-val" id="vK">0%</div></div>
+      </div>
+
+      <div class="result-card">
+        <div class="result-swatches">
+          <div class="swatch-half" id="mix-swatch"><span data-t="my-mix">あなたの色</span></div>
+          <div class="swatch-half" id="tgt-swatch2"><span data-t="tgt-color">目標色</span></div>
+        </div>
+      </div>
+
+      <div class="score-wrap">
+        <div class="score-top"><span data-t="match-score">一致度</span><strong id="sc-num">—</strong></div>
+        <div class="score-track"><div class="score-fill" id="sc-fill" style="width:0%"></div></div>
+      </div>
+
+      <!-- HINT AREA -->
+      <div class="hint-area" id="hint-area"></div>
+
+      <!-- PINTO reaction -->
+      <div class="pinto-react">
+        <div id="color-pinto"></div>
+        <div class="pinto-speech" id="pinto-speech"></div>
+      </div>
+
+      <button class="next-btn" onclick="nextColor()" data-t="next-challenge">次の問題 →</button>
+    </div>
+
+    <!-- SAFETY -->
+    <div class="page" id="pg-safety">
+      <div class="sec-hdr">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <h2 data-t="safety-title">安全教育</h2>
+      </div>
+      <div class="safety-list" id="safety-list"></div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="page" id="pg-quiz">
+      <div class="sec-hdr">
+        <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
+        <h2 data-t="quiz-title">災害事例クイズ</h2>
+      </div>
+      <div class="quiz-prog">
+        <div class="q-num" id="q-num">Q1 / 4</div>
+        <div class="prog-track"><div class="prog-fill" id="q-prog" style="width:25%"></div></div>
+      </div>
+      <div id="quiz-body"></div>
+    </div>
+
+
+    <!-- ROADMAP -->
+    <div class="page" id="pg-road">
+      <div class="sec-hdr">
+        <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:#E8580A;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M3 17l4-8 4 4 4-6 4 10"/><path d="M3 17h18"/></svg>
+        <h2 data-t="road-title">資格ロードマップ</h2>
+      </div>
+      <div id="road-body" style="padding:0 16px 16px"></div>
+    </div>
+
+    <!-- DICT -->
+    <div class="page" id="pg-dict">
+      <div class="sec-hdr">
+        <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:#E8580A;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <h2 data-t="dict-title">専門用語辞典</h2>
+      </div>
+      <div style="padding:0 16px 10px;display:flex;gap:6px;flex-wrap:wrap" id="dict-cats"></div>
+      <div style="padding:0 16px 4px">
+        <input id="dict-search" type="text" placeholder="🔍 検索..." style="width:100%;background:#1e2d4a;border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:9px 14px;color:#fff;font-size:13px;outline:none" oninput="filterDict()">
+      </div>
+      <div id="dict-body" style="padding:8px 16px 16px"></div>
+    </div>
+  </div><!-- /pages -->
+
+  <!-- NAV -->
+  <div class="nav">
+    <button class="nav-btn on" onclick="goPage('home')">
+      <svg viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span data-t="nav-home">ホーム</span><div class="nav-dot"></div>
+    </button>
+    <button class="nav-btn" onclick="goPage('color')">
+      <svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+      <span data-t="nav-color">調色</span><div class="nav-dot"></div>
+    </button>
+    <button class="nav-btn" onclick="goPage('safety')">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span data-t="nav-safety">安全</span><div class="nav-dot"></div>
+    </button>
+    <button class="nav-btn" onclick="goPage('quiz')">
+      <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
+      <span data-t="nav-quiz">クイズ</span><div class="nav-dot"></div>
+    </button>
+    <button class="nav-btn" onclick="goPage('road')">
+      <svg viewBox="0 0 24 24"><path d="M3 17l4-8 4 4 4-6 4 10"/><path d="M3 17h18"/></svg>
+      <span data-t="nav-road">資格</span><div class="nav-dot"></div>
+    </button>
+    <button class="nav-btn" onclick="goPage('dict')">
+      <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="12" y1="6" x2="16" y2="6"/><line x1="12" y1="10" x2="16" y2="10"/></svg>
+      <span data-t="nav-dict">辞典</span><div class="nav-dot"></div>
+    </button>
+  </div>
+
+</div><!-- /root -->
+
+<!-- SCORE RESULT OVERLAY -->
+<div class="result-overlay" id="result-overlay">
+  <div id="overlay-pinto"></div>
+  <div class="result-big" id="overlay-score"></div>
+  <div class="result-label" data-t="match-result">一致度スコア</div>
+  <div class="result-msg" id="overlay-msg"></div>
+  <button class="result-close" onclick="closeOverlay()" data-t="next-challenge">次の問題 →</button>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────────
+const COLORS=[
+  {ja:'船体グレー',en:'Hull Gray',hex:'#8896A8',r:20,y:10,b:40,w:55,k:15,
+   hints:{
+     ja:['まず「白」をベースに多めに入れよう（50%以上）','次に「青」を加えて灰色に近づける（30〜40%）','「黒」を少し足すと引き締まった船体グレーになる（10〜15%）'],
+     en:['Start with a heavy base of White (50%+)','Add Blue to push it toward grey (30–40%)','A touch of Black sharpens it into hull grey (10–15%)']
+   }},
+  {ja:'工場イエロー',en:'Safety Yellow',hex:'#F4C430',r:60,y:100,b:0,w:15,k:0,
+   hints:{
+     ja:['「黄」をたっぷり入れよう（メインカラー）','「赤」を加えると黄色が濃くオレンジ寄りになる（50〜60%）','「白」を少し足して明るさを調整する（10〜20%）'],
+     en:['Load up on Yellow — it\'s the main colour','Add Red to deepen and warm the yellow (50–60%)','A little White brightens the tone (10–20%)']
+   }},
+  {ja:'錆止めレッド',en:'Primer Red',hex:'#C0392B',r:100,y:20,b:10,w:8,k:5,
+   hints:{
+     ja:['「赤」を最大まで入れよう（ベースカラー）','「黄」を少し加えると赤が深みを増す（20%前後）','「黒」をわずかに足すと防錆塗料らしい落ち着いた赤になる'],
+     en:['Crank Red to maximum — it\'s the base','A little Yellow deepens the red (around 20%)','A hint of Black gives it that muted primer-red tone']
+   }},
+  {ja:'海洋ブルー',en:'Marine Blue',hex:'#2E5FA3',r:0,y:8,b:100,w:25,k:10,
+   hints:{
+     ja:['「青」をメインにたっぷり入れよう','「白」を加えて明るさを調整する（20〜30%）','「黒」を少し足すと深みのある海洋ブルーになる（10%前後）'],
+     en:['Blue is the star — use plenty of it','Add White to control lightness (20–30%)','A touch of Black adds the deep marine quality (around 10%)']
+   }},
+  {ja:'造船グリーン',en:'Shipyard Green',hex:'#2E7D4F',r:5,y:60,b:70,w:20,k:8,
+   hints:{
+     ja:['「青」と「黄」を同じくらい入れると緑になる（各60〜70%）','「白」を加えて明度を調整する（20%前後）','「黒」をわずかに足すと造船所らしい深いグリーンになる'],
+     en:['Equal parts Blue and Yellow make green (60–70% each)','Add White to adjust the lightness (around 20%)','A hint of Black gives it that deep industrial green']
+   }},
+];
+
+const SAFETY={
+  ja:[
+    {icon:'😷',bg:'rgba(232,88,10,0.15)',tag:'必須',tc:'#E8580A',title:'防毒マスク（有機ガス用）の着用',desc:'密閉空間・溶剤塗装時は必ず防毒マスクを着用。吸収缶の交換時期を確認すること。'},
+    {icon:'🔥',bg:'rgba(192,57,43,0.15)',tag:'危険',tc:'#C0392B',title:'引火点以下での作業管理',desc:'ラッカー系塗料の引火点は−20℃前後。火気・静電気・喫煙は厳禁。'},
+    {icon:'🪜',bg:'rgba(30,87,153,0.15)',tag:'義務',tc:'#3A7BD5',title:'フルハーネス型安全帯の着用',desc:'高さ2m以上の作業ではフルハーネス義務化（2022年〜）。親綱の確認を忘れずに。'},
+    {icon:'💨',bg:'rgba(26,122,74,0.15)',tag:'重要',tc:'#1A7A4A',title:'密閉空間の換気・酸素濃度測定',desc:'船倉・タンク内作業前に酸素濃度（18%以上）と有機溶剤濃度を必ず測定。'},
+    {icon:'☀️',bg:'rgba(246,216,96,0.12)',tag:'注意',tc:'#C8920A',title:'熱中症対策（WBGT管理）',desc:'WBGT28以上で警戒。こまめな水分補給と休憩。体調異常を感じたら即作業中止。'},
+  ],
+  en:[
+    {icon:'😷',bg:'rgba(232,88,10,0.15)',tag:'Required',tc:'#E8580A',title:'Wear organic vapor respirator',desc:'Always wear an organic gas respirator in enclosed spaces. Check cartridge expiry.'},
+    {icon:'🔥',bg:'rgba(192,57,43,0.15)',tag:'Danger',tc:'#C0392B',title:'Flash point management',desc:'Lacquer paints flash below −20°C. Strictly prohibit open flame, static discharge, and smoking.'},
+    {icon:'🪜',bg:'rgba(30,87,153,0.15)',tag:'Mandatory',tc:'#3A7BD5',title:'Full-body harness at height',desc:'Full-body harness required above 2m (mandatory since 2022). Always verify anchor points.'},
+    {icon:'💨',bg:'rgba(26,122,74,0.15)',tag:'Critical',tc:'#1A7A4A',title:'Ventilation & O₂ measurement',desc:'Before entering holds or tanks, measure O₂ (≥18%) and solvent vapor concentration.'},
+    {icon:'☀️',bg:'rgba(246,216,96,0.12)',tag:'Caution',tc:'#C8920A',title:'Heat stroke prevention (WBGT)',desc:'Alert at WBGT 28+. Hydrate frequently and rest. Stop immediately if feeling unwell.'},
+  ]
+};
+
+const QUIZ={
+  ja:[
+    // ── CATEGORY 1: 塗料・材料 ──
+    {cat:'塗料・材料',lv:'3級',sc:'',
+     q:'アクリル樹脂塗料の特徴として、正しいものはどれか？',
+     cs:['耐候性が非常に高く、屋外使用に最適である','乾燥が遅く、作業性が悪い','水に溶けやすく、シンナーは不要である','ラッカー系に比べて耐溶剤性が低い'],
+     ok:0,ex:'アクリル樹脂塗料は耐候性・耐光性に優れ、外部用途に広く使われます。ラッカー系より硬度・耐溶剤性も高い。'},
+
+    {cat:'塗料・材料',lv:'2級',sc:'',
+     q:'二液形ウレタン塗料の主剤と硬化剤の混合について、正しいのはどれか？',
+     cs:['混合後は時間をかけて使い切ってよい','ポットライフ（可使時間）内に使い切る必要がある','硬化剤が多いほど塗膜が柔軟になる','主剤のみで塗装しても同等の塗膜が得られる'],
+     ok:1,ex:'二液ウレタン塗料にはポットライフがあり、混合後は規定時間内（通常数時間）に使い切る必要があります。時間を超えるとゲル化して使用不能になります。'},
+
+    {cat:'塗料・材料',lv:'2級',sc:'',
+     q:'エポキシ樹脂塗料の主な用途として、最も適切なものはどれか？',
+     cs:['木部の仕上げ塗装','コンクリート・金属の下塗り・防食塗装','外壁の意匠仕上げ塗装','内装木部のクリア仕上げ'],
+     ok:1,ex:'エポキシ樹脂塗料は密着性・防食性・耐薬品性に優れ、コンクリートや鉄鋼の下塗り・防食用途に最適です。ただし紫外線で黄変するため上塗りには不向きです。'},
+
+    {cat:'塗料・材料',lv:'1級',sc:'',
+     q:'弱溶剤形塗料を使用する主な理由として、正しいのはどれか？',
+     cs:['塗膜の硬度が水性より大幅に高い','旧塗膜を侵しにくく、臭気が少ない','乾燥が極めて速く工期短縮になる','強溶剤形より耐候性が大幅に優れる'],
+     ok:1,ex:'弱溶剤形塗料は、強溶剤に比べて旧塗膜を侵しにくく、臭気・環境負荷も低減できます。改修工事で旧塗膜が残る現場での上塗りに適しています。'},
+
+    {cat:'塗料・材料',lv:'1級',sc:'',
+     q:'塗料の「ポットライフ」の説明として、正しいのはどれか？',
+     cs:['塗料を缶に保管できる最長期間','二液塗料を混合後、使用可能な時間','塗膜が乾燥して硬化するまでの時間','塗料が凍結し始める温度'],
+     ok:1,ex:'ポットライフ（可使時間）は二液形塗料を混合してから使用可能な時間です。温度が高いほど短くなります。ポットライフを超えると粘度上昇・ゲル化が起き、塗装不能になります。'},
+
+    // ── CATEGORY 2: 色彩 ──
+    {cat:'色彩',lv:'3級',sc:'',
+     q:'マンセル表色系において、色の三属性の組み合わせとして正しいのはどれか？',
+     cs:['色相・明度・彩度','色相・輝度・濃度','明度・彩度・光沢','色調・濃度・透明度'],
+     ok:0,ex:'マンセル表色系では色を「色相（Hue）・明度（Value）・彩度（Chroma）」の3属性で表します。記号は H V/C の形式（例：5R 4/14）で表記されます。'},
+
+    {cat:'色彩',lv:'3級',sc:'',
+     q:'マンセル表色系で「明度」の範囲として正しいのはどれか？',
+     cs:['0〜5','0〜10','1〜100','−10〜+10'],
+     ok:1,ex:'マンセル明度（Value）は完全な黒を0、完全な白を10とした0〜10の11段階で表します。実際の塗料では1〜9程度の範囲が使われます。'},
+
+    {cat:'色彩',lv:'2級',sc:'',
+     q:'補色の関係として、正しいものはどれか？',
+     cs:['赤と橙','青と紫','赤と緑','黄と黄緑'],
+     ok:2,ex:'補色とは色相環で正反対に位置する色の組み合わせです。赤と緑、青と橙、黄と紫が補色関係にあります。補色を混ぜると無彩色（灰色）に近づきます。'},
+
+    {cat:'色彩',lv:'2級',sc:'',
+     q:'同じ色でも、背景色によって異なって見える現象を何というか？',
+     cs:['メタメリズム（条件等色）','色の対比','色の同化','プルキンエ現象'],
+     ok:1,ex:'「色の対比」は、隣接する色や背景色の影響で、同じ色が異なって見える現象です。明度対比・彩度対比・色相対比があります。塗装の色合わせ確認時は背景を統一することが重要です。'},
+
+    {cat:'色彩',lv:'1級',sc:'',
+     q:'日本塗料工業会（日塗工）の塗料用標準色票について、正しいのはどれか？',
+     cs:['マンセル値と完全に一致するため互換性がある','有効期限は5年で、3年ごとに改版される','有効期限は3年で、2年ごとに新版が発行される','塗料メーカーが独自に発行する色見本帳である'],
+     ok:2,ex:'日塗工（日本塗料工業会）の塗料用標準色票は有効期限3年、2年ごとに新版が発行されます。改版のたびに色番号の変更や廃番があるため、使用する際は最新版の確認が必要です。'},
+
+    {cat:'色彩',lv:'1級',sc:'',
+     q:'メタメリズム（条件等色）の説明として、正しいのはどれか？',
+     cs:['光源が変わっても同じ色に見える現象','異なる分光反射率でも特定の照明下で同じ色に見える現象','同色の塗料でも塗り重ねると色が変わる現象','湿度の変化で塗膜の色が変わる現象'],
+     ok:1,ex:'メタメリズム（条件等色）は、分光反射率が異なる色でも特定の光源下では同じ色に見える現象です。自然光と蛍光灯下で色が異なって見えることがあり、色合わせは複数光源で確認する必要があります。'},
+
+    // ── CATEGORY 3: 塗装一般・工法 ──
+    {cat:'塗装工法',lv:'3級',sc:'',
+     q:'「ケレン1種」の作業内容として、正しいのはどれか？',
+     cs:['さびを手工具で部分的に除去する','ブラスト処理により錆・黒皮を完全除去する','ペーパーサンドで旧塗膜を軽く研磨する','高圧水洗のみで汚れを除去する'],
+     ok:1,ex:'ケレン1種はブラスト処理（ショットブラスト・サンドブラスト等）により錆・黒皮・旧塗膜を完全除去する最高グレードの素地調整です。鋼橋・タンク・船体に採用されます。'},
+
+    {cat:'塗装工法',lv:'3級',sc:'',
+     q:'塗装の不良現象「タレ」が発生する主な原因として、正しいのはどれか？',
+     cs:['塗料の希釈が不足している（濃すぎる）','塗り回数が少なすぎる','被塗面の温度が低すぎる','一度の塗布量が多すぎる（過塗布）'],
+     ok:3,ex:'「タレ」は一度の塗布量が多すぎる（過塗布）ときに塗料が自重で垂れ下がる不良です。スプレーは適正な吐出量・距離・速度を保つことが重要。希釈過多（塗料が薄すぎ）でも発生します。'},
+
+    {cat:'塗装工法',lv:'2級',sc:'',
+     q:'「ブリスター（膨れ）」が発生する主な原因として、正しいのはどれか？',
+     cs:['塗膜が薄すぎる','素地や下塗り塗膜に水分・溶剤が残留している','塗料の混合比が正確すぎる','乾燥時間が長すぎる'],
+     ok:1,ex:'ブリスターは素地・塗膜間に残った水分・溶剤・空気が熱で膨張して塗膜を押し上げる現象です。素地の乾燥不足、下塗り乾燥不足、過厚塗りが主因です。'},
+
+    {cat:'塗装工法',lv:'2級',sc:'',
+     q:'「ピンホール」が発生する原因として、最も適切なものはどれか？',
+     cs:['塗料の粘度が高すぎる','素地の気孔から発生した気泡が塗膜を突き破る','ローラーの目が粗すぎる','乾燥が遅すぎる'],
+     ok:1,ex:'ピンホールは多孔質素地（コンクリート・モルタル等）の気孔内の空気・水分が塗布熱で膨張し、塗膜を突き破って生じる針穴です。シーラー下塗りや素地調整が有効です。'},
+
+    {cat:'塗装工法',lv:'1級',sc:'',
+     q:'エアレススプレー塗装の特徴として、正しいのはどれか？',
+     cs:['空気を使って霧化するため塗料ミストが少ない','塗料に高圧をかけて霧化するため膜厚を厚くつけやすい','エアスプレーより仕上がりが均一で高品質','細部・角部への回り込みがエアスプレーより優れる'],
+     ok:1,ex:'エアレススプレーは塗料自体に高圧（10〜20MPa程度）をかけてノズルから噴射霧化します。高粘度塗料を厚膜で塗布でき、防食塗装・下塗りに向きます。仕上がりはエアスプレーに劣ります。'},
+
+    // ── CATEGORY 4: 安全衛生・関係法規 ──
+    {cat:'安全衛生',lv:'3級',sc:'',
+     q:'有機溶剤作業主任者の選任が必要となる作業として、正しいのはどれか？',
+     cs:['屋外の開放空間での水性塗料塗装','タンク内部での有機溶剤を含む塗装作業','屋内での粉体塗料の塗装','高所での電動工具使用作業'],
+     ok:1,ex:'有機溶剤作業主任者（有機則第19条）の選任は、タンク・船倉・配管内部等の局所排気装置を設けた屋内作業場で有機溶剤を使用する場合に必要です。'},
+
+    {cat:'安全衛生',lv:'2級',sc:'',
+     q:'塗装作業における「局所排気装置」の設置義務に関して、正しいのはどれか？',
+     cs:['屋外での吹付け塗装は不要','第1種・第2種有機溶剤を使用する屋内作業場に原則設置が必要','第3種有機溶剤のみ設置が必要','設置は任意で義務はない'],
+     ok:1,ex:'有機溶剤中毒予防規則により、第1種・第2種有機溶剤を使用する屋内作業場には局所排気装置または全体換気装置の設置が義務付けられています。'},
+
+    {cat:'安全衛生',lv:'2級',sc:'',
+     q:'フルハーネス型安全帯の着用が義務化された高さとして、正しいのはどれか？',
+     cs:['1m以上','2m以上','3m以上','5m以上'],
+     ok:1,ex:'2022年1月から高さ2m以上の作業でフルハーネス型安全帯の着用が原則義務化されました（労働安全衛生法改正）。従来の胴ベルト型は原則使用不可です。'},
+
+    {cat:'安全衛生',lv:'1級',sc:'',
+     q:'「特定化学物質障害予防規則」に関連する塗料成分として、最も注意が必要なものはどれか？',
+     cs:['アクリル樹脂','トルエン・キシレンなどの有機溶剤','酸化チタン（白色顔料）','炭酸カルシウム（体質顔料）'],
+     ok:1,ex:'トルエン・キシレンは特化則・有機則の対象物質で、管理濃度が定められています。吸入により中枢神経障害を起こす危険があり、局所排気装置設置・保護具着用・作業環境測定が義務です。'},
+
+    {cat:'安全衛生',lv:'1級',sc:'',
+     q:'酸素欠乏危険作業における作業前確認事項として、最も重要なものはどれか？',
+     cs:['塗料の在庫確認','酸素濃度18%以上・硫化水素濃度10ppm以下の確認','作業員の体重測定','塗装仕様書の内容確認'],
+     ok:1,ex:'酸欠危険場所（船倉・タンク・ピット等）への入場前は、酸素濃度18%以上・硫化水素濃度10ppm以下であることを測定確認する義務があります（酸素欠乏症等防止規則）。'},
+
+    // ── CATEGORY 5: 災害事例（発展） ──
+    {cat:'災害事例',lv:'2級',sc:'橋梁の塗替え工事で、旧塗膜を剥離剤で除去した後に新たな塗料を塗布したところ、翌日に大面積で塗膜が剥離した。',
+     q:'この事故の最も考えられる原因はどれか？',
+     cs:['塗料の缶を逆さに保管した','剥離剤の残留成分が密着を阻害した','風速が強すぎた','塗料が古すぎた'],
+     ok:1,ex:'剥離剤にはアルカリ成分・有機溶剤が含まれており、完全に除去されないと後工程の塗膜密着を著しく阻害します。剥離後は水洗い・中和・乾燥を十分行う必要があります。'},
+
+    {cat:'災害事例',lv:'1級',sc:'新築マンションの外壁に弾性塗料を塗装した。1年後、南面の塗膜が全面的に膨れ・剥離した。',
+     q:'最も可能性の高い原因はどれか？',
+     cs:['塗料のロット不良','コンクリートの含水率が高いまま塗装した','足場の解体が早すぎた','塗り重ね間隔が長すぎた'],
+     ok:1,ex:'コンクリートの含水率が高い状態で透湿性の低い塗料を塗ると、内部水分の蒸発で塗膜が膨れ・剥離します。コンクリートの含水率は8%以下が目安。特に夏季の養生期間不足に注意。'},
+
+    {cat:'災害事例',lv:'1級',sc:'船体タンク内の防食塗装作業中に、作業員2名が同時に意識を失って倒れた。',
+     q:'原因として最も可能性が高く、かつ再発防止策として最も適切な組み合わせはどれか？',
+     cs:['熱中症 → 水分補給の徹底','有機溶剤蒸気の高濃度蓄積 → 強制換気と防毒マスク着用の徹底','塗料の重量 → 軽い塗料への変更','騒音 → 耳栓の着用'],
+     ok:1,ex:'密閉タンク内では有機溶剤蒸気が滞留しやすく、短時間で中毒濃度に達します。2名同時というのは換気不足のサインです。送気マスク（エアラインマスク）または強制換気＋防毒マスクの組み合わせが基本対策です。'},
+  ],
+  en:[
+    {cat:'Materials',lv:'Grade 3',sc:'',
+     q:'Which of the following best describes acrylic resin paint?',
+     cs:['Poor weather resistance, unsuitable for outdoor use','Very slow drying, poor workability','Dissolves in water, no thinner needed','Excellent weather resistance, widely used outdoors'],
+     ok:3,ex:'Acrylic resin paints offer excellent weather and UV resistance, making them ideal for outdoor applications. They also provide better hardness and solvent resistance than lacquer-type paints.'},
+
+    {cat:'Materials',lv:'Grade 2',sc:'',
+     q:'Regarding two-component urethane paint mixing, which statement is correct?',
+     cs:['Mixed paint can be used at any time until empty','Must be used within the pot life after mixing','More hardener means a more flexible film','Base coat alone gives equivalent results'],
+     ok:1,ex:'Two-component urethane paints have a pot life — the time limit after mixing during which they must be used. Exceeding pot life causes viscosity increase and gelation, making the paint unusable.'},
+
+    {cat:'Materials',lv:'Grade 2',sc:'',
+     q:'What is the primary application of epoxy resin paint?',
+     cs:['Finish coat on woodwork','Primer and anticorrosion coating for concrete and metal','Decorative finish for exterior walls','Clear finish for interior woodwork'],
+     ok:1,ex:'Epoxy resin paints excel in adhesion, corrosion resistance, and chemical resistance, making them ideal for primers and anti-corrosion coatings on concrete and steel. However, they yellow under UV, so a topcoat is required.'},
+
+    {cat:'Materials',lv:'Grade 1',sc:'',
+     q:'What is the main reason for using weak-solvent-type paint?',
+     cs:['Much harder film than water-based paints','Less likely to attack old coatings, lower odor','Extremely fast drying for shorter schedules','Much better weather resistance than strong-solvent types'],
+     ok:1,ex:'Weak-solvent paints are less aggressive to existing coatings and produce lower VOC emissions and odor. They are the preferred choice for overcoating existing paint systems in renovation work.'},
+
+    {cat:'Color Theory',lv:'Grade 3',sc:'',
+     q:'In the Munsell color system, what are the three color attributes?',
+     cs:['Hue, Brightness, Density','Hue, Value, Chroma','Tone, Saturation, Luminance','Shade, Tint, Tone'],
+     ok:1,ex:'The Munsell system describes color using Hue (H), Value (V), and Chroma (C), written as H V/C (e.g., 5R 4/14). Value ranges from 0 (black) to 10 (white).'},
+
+    {cat:'Color Theory',lv:'Grade 2',sc:'',
+     q:'Which pair is a complementary color relationship?',
+     cs:['Red and Orange','Blue and Violet','Red and Green','Yellow and Yellow-Green'],
+     ok:2,ex:'Complementary colors sit opposite each other on the color wheel. Red-Green, Blue-Orange, and Yellow-Violet are complementary pairs. Mixed together, complements produce achromatic gray.'},
+
+    {cat:'Color Theory',lv:'Grade 1',sc:'',
+     q:'Regarding the Japan Paint Manufacturers Association (JPMA) Standard Color Chart, which is correct?',
+     cs:['Fully interchangeable with Munsell values','Valid for 5 years, revised every 3 years','Valid for 3 years, new edition issued every 2 years','Published independently by each paint manufacturer'],
+     ok:2,ex:'The JPMA Standard Color Chart has a 3-year validity period, with new editions published every 2 years. Color numbers and formulations may change between editions, so always confirm you are using the current version.'},
+
+    {cat:'Painting Methods',lv:'Grade 3',sc:'',
+     q:'Which statement best describes "Grade 1 surface preparation (Keren 1)"?',
+     cs:['Partial rust removal using hand tools','Complete removal of rust, mill scale, and old coatings by blast cleaning','Light sanding of old paint with sandpaper','Cleaning with high-pressure water only'],
+     ok:1,ex:'Keren Grade 1 is blast cleaning (shot blast, sand blast, etc.) that completely removes rust, mill scale, and old coatings. It is the highest grade of surface preparation, used on bridges, tanks, and ship hulls.'},
+
+    {cat:'Painting Methods',lv:'Grade 2',sc:'',
+     q:'What is the primary cause of "blistering" in a paint film?',
+     cs:['Paint applied too thinly','Moisture or solvent trapped in the substrate or undercoat','Mixing ratio too accurate','Drying time too long'],
+     ok:1,ex:'Blistering occurs when moisture, solvent, or air trapped between the substrate and coating expands with heat, pushing up the film. Causes include insufficient substrate drying, inadequate inter-coat drying, and excessive film thickness.'},
+
+    {cat:'Painting Methods',lv:'Grade 1',sc:'',
+     q:'Which statement correctly describes airless spray coating?',
+     cs:['Uses compressed air for atomization, producing less overspray','Applies high pressure directly to the paint for atomization, enabling thick film application','Produces a finer, higher-quality finish than air spray','Better penetration into recesses and edges than air spray'],
+     ok:1,ex:'Airless spray applies high hydraulic pressure (approx. 10–20 MPa) to force paint through a small orifice. It allows thick-film application of high-viscosity coatings and is well-suited for anticorrosion and primer work.'},
+
+    {cat:'Safety',lv:'Grade 3',sc:'',
+     q:'For which work situation is appointment of an Organic Solvent Work Supervisor required?',
+     cs:['Outdoor painting with water-based coatings in open air','Indoor painting with organic solvents in a tank interior','Indoor powder coating operations','High-work using power tools'],
+     ok:1,ex:'Under the Organic Solvent Poisoning Prevention Rules, an Organic Solvent Work Supervisor must be appointed for tank, vessel, or enclosed-space painting with organic solvents where local exhaust ventilation is installed.'},
+
+    {cat:'Safety',lv:'Grade 2',sc:'',
+     q:'From what height is a full-body harness mandatory in Japan (as of 2022)?',
+     cs:['1m or higher','2m or higher','3m or higher','5m or higher'],
+     ok:1,ex:'Since January 2022, full-body harnesses are mandatorily required for work at heights of 2m or more under revised Japanese occupational safety law. The conventional waist-belt harness is no longer permitted as standard.'},
+
+    {cat:'Safety',lv:'Grade 1',sc:'',
+     q:'Before entering an oxygen-deficient hazardous location, what must be confirmed?',
+     cs:['Paint inventory levels','O₂ concentration ≥18% and H₂S concentration ≤10 ppm','Body weight of all workers','Contents of the paint specification sheet'],
+     ok:1,ex:'Under the Oxygen Deficiency Prevention Rules, O₂ ≥18% and H₂S ≤10 ppm must be confirmed by measurement before entering any oxygen-deficient space (holds, tanks, pits). A standby worker must also be positioned outside.'},
+
+    {cat:'Accident Cases',lv:'Grade 2',sc:'After removing old paint with a stripping agent on a bridge repainting job, the fresh topcoat delaminated over a large area the following day.',
+     q:'What is the most likely cause?',
+     cs:['Paint stored upside down','Residual stripper chemicals interfered with adhesion','Wind speed was too high','Paint was past its shelf life'],
+     ok:1,ex:'Stripping agents contain alkaline or solvent components. If not fully removed, they prevent adhesion of the subsequent coat. After stripping, thorough water washing, neutralization, and drying are essential before recoating.'},
+
+    {cat:'Accident Cases',lv:'Grade 1',sc:'Elastic paint was applied to a new apartment building exterior. One year later, widespread blistering and delamination appeared on the south-facing walls.',
+     q:'What is the most likely cause?',
+     cs:['Manufacturing defect in the paint lot','Concrete moisture content was too high when painted','Scaffolding removed too early','Recoat interval was too long'],
+     ok:1,ex:'Applying low-permeability coatings over concrete with high moisture content (target: ≤8%) traps internal moisture. As it evaporates, it pushes up the film causing blistering. Summer applications with insufficient curing time are particularly at risk.'},
+  ]
+};
+
+
+const TEXT={
+  ja:{
+    'hero-badge':'塗装職人 トレーニング',
+    'hero-title':'現場の知識を<br><span>ゲームで学ぶ</span>',
+    'hero-sub':'調色・安全・資格対策まで<br>日英バイリンガル対応',
+    'mod1':'調色シミュレーター','mod1s':'原色を混ぜて目標色に近づけよう',
+    'mod2':'安全教育','mod2s':'PPE・有機溶剤・高所作業',
+    'mod3':'災害事例クイズ','mod3s':'事故シナリオから正解を選ぶ',
+    'mod4':'専門用語辞典','mod4s':'現場スラング・日英対訳',
+    'st1':'収録用語','st2':'災害事例','st3':'バイリンガル',
+    'color-title':'調色チャレンジ',
+    'diff-easy':'🟠 入門','diff-mid':'🔵 中級','diff-adv':'⭐ 上級','tgt-lbl':'目標の色',
+    'lR':'赤 Red','lY':'黄 Yellow','lB':'青 Blue','lW':'白 White','lK':'黒 Black',
+    'my-mix':'あなたの色','tgt-color':'目標色',
+    'match-score':'一致度','match-result':'一致度スコア',
+    'next-challenge':'次の問題 →',
+    'safety-title':'安全教育','quiz-title':'災害事例クイズ',
+    'nav-home':'ホーム','nav-color':'調色','nav-safety':'安全','nav-quiz':'クイズ',
+  },
+  en:{
+    'hero-badge':'Painting Pro Training',
+    'hero-title':'Learn field knowledge<br><span>through gameplay</span>',
+    'hero-sub':'Color mixing, safety & exam prep<br>Bilingual Japanese / English',
+    'mod1':'Color Mixing Simulator','mod1s':'Mix primaries to match the target',
+    'mod2':'Safety Education','mod2s':'PPE, solvents, working at height',
+    'mod3':'Accident Case Quizzes','mod3s':'Pick the correct answer from real scenarios',
+    'mod4':'Technical Dictionary','mod4s':'Field slang & bilingual terms',
+    'st1':'Terms','st2':'Accident cases','st3':'Bilingual',
+    'color-title':'Color Mixing Challenge',
+    'diff-easy':'🟠 Beginner','diff-mid':'🔵 Intermediate','diff-adv':'⭐ Advanced','tgt-lbl':'Target color',
+    'lR':'Red','lY':'Yellow','lB':'Blue','lW':'White','lK':'Black',
+    'my-mix':'Your mix','tgt-color':'Target',
+    'match-score':'Match score','match-result':'Match score',
+    'next-challenge':'Next challenge →',
+    'safety-title':'Safety Education','quiz-title':'Accident Case Quizzes',
+    'nav-home':'Home','nav-color':'Color','nav-safety':'Safety','nav-quiz':'Quiz',
+  }
+};
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let lang='ja', xp=0, colorIdx=0, quizIdx=0, quizAnswered=false;
+
+function getLv(){return xp<40?1:xp<80?2:3}
+
+// ─────────────────────────────────────────────
+// PINTO SVG GENERATOR
+// ─────────────────────────────────────────────
+function pintoSVG(lv, size=100){
+  const s=size/160;
+  const W=size, H=Math.round(size*230/160);
+
+  if(lv===1) return `<svg width="${W}" height="${H}" viewBox="0 0 160 230">
+    <defs>
+      <radialGradient id="pb1" cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#FF8C42"/><stop offset="100%" stop-color="#C44A08"/></radialGradient>
+      <radialGradient id="pf1" cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#FFE0A0"/><stop offset="100%" stop-color="#F5C060"/></radialGradient>
+      <radialGradient id="ph1" cx="40%" cy="30%" r="60%"><stop offset="0%" stop-color="#3A7BD5"/><stop offset="100%" stop-color="#1A3F7A"/></radialGradient>
+    </defs>
+    <ellipse cx="80" cy="226" rx="34" ry="6" fill="rgba(0,0,0,0.3)"/>
+    <rect x="58" y="168" width="13" height="35" rx="6" fill="#2D3748"/>
+    <rect x="54" y="194" width="21" height="13" rx="5" fill="#1A202C"/>
+    <rect x="52" y="202" width="23" height="5" rx="2" fill="#0D1117"/>
+    <rect x="89" y="168" width="13" height="35" rx="6" fill="#2D3748"/>
+    <rect x="85" y="194" width="21" height="13" rx="5" fill="#1A202C"/>
+    <rect x="84" y="202" width="23" height="5" rx="2" fill="#0D1117"/>
+    <rect x="40" y="108" width="80" height="68" rx="10" fill="url(#pb1)"/>
+    <rect x="40" y="128" width="80" height="26" fill="#fff"/>
+    <text x="80" y="138" text-anchor="middle" font-size="7" font-weight="700" fill="#999" font-family="Arial">PAINTER'S FORGE</text>
+    <text x="80" y="149" text-anchor="middle" font-size="13" font-weight="900" fill="#E8580A" font-family="Arial">PINTO</text>
+    <rect x="37" y="104" width="86" height="9" rx="4" fill="#A03806"/>
+    <rect x="39" y="105" width="82" height="5" rx="3" fill="#C44A08"/>
+    <rect x="37" y="167" width="86" height="9" rx="4" fill="#A03806"/>
+    <rect x="16" y="116" width="26" height="12" rx="6" fill="#3D4F62"/>
+    <rect x="4" y="110" width="15" height="7" rx="3" fill="#8B6914"/>
+    <rect x="5" y="108" width="11" height="4" rx="1" fill="#9AA4AE"/>
+    <rect x="2" y="112" width="9" height="10" rx="2" fill="#4A3010"/>
+    <rect x="3" y="120" width="7" height="3" rx="2" fill="#E8580A" opacity="0.9"/>
+    <rect x="118" y="116" width="26" height="12" rx="6" fill="#3D4F62"/>
+    <rect x="134" y="106" width="20" height="26" rx="4" fill="#1E5799"/>
+    <rect x="132" y="102" width="24" height="7" rx="3" fill="#163F72"/>
+    <path d="M136 102 Q144 92 152 102" fill="none" stroke="#4A5568" stroke-width="2.5" stroke-linecap="round"/>
+    <rect x="70" y="97" width="20" height="16" rx="5" fill="#C44A08"/>
+    <rect x="46" y="55" width="68" height="50" rx="16" fill="url(#pf1)"/>
+    <rect x="42" y="44" width="76" height="34" rx="14" fill="url(#ph1)"/>
+    <rect x="38" y="67" width="84" height="9" rx="4" fill="#163F72"/>
+    <rect x="36" y="74" width="88" height="4" rx="2" fill="#163F72"/>
+    <rect x="54" y="47" width="42" height="6" rx="3" fill="rgba(255,255,255,0.2)"/>
+    <ellipse cx="63" cy="76" rx="8" ry="8" fill="#fff"/>
+    <ellipse cx="97" cy="76" rx="8" ry="8" fill="#fff"/>
+    <circle cx="64" cy="77" r="5.5" fill="#3D2B1A"/>
+    <circle cx="98" cy="77" r="5.5" fill="#3D2B1A"/>
+    <circle cx="64" cy="77" r="3" fill="#1A0E08"/>
+    <circle cx="98" cy="77" r="3" fill="#1A0E08"/>
+    <circle cx="66" cy="75" r="1.8" fill="#fff"/>
+    <circle cx="100" cy="75" r="1.8" fill="#fff"/>
+    <path d="M57 68 Q63 65 69 67" fill="none" stroke="#8B6020" stroke-width="2" stroke-linecap="round"/>
+    <path d="M91 67 Q97 65 103 68" fill="none" stroke="#8B6020" stroke-width="2" stroke-linecap="round"/>
+    <path d="M60 88 Q80 98 100 88" fill="none" stroke="#C07030" stroke-width="3" stroke-linecap="round"/>
+    <ellipse cx="54" cy="85" rx="7" ry="5" fill="#FFB3A0" opacity="0.55"/>
+    <ellipse cx="106" cy="85" rx="7" ry="5" fill="#FFB3A0" opacity="0.55"/>
+    <circle cx="28" cy="70" r="4" fill="#E8580A" opacity="0.75"/>
+    <circle cx="22" cy="82" r="2.5" fill="#F6D860" opacity="0.8"/>
+    <circle cx="130" cy="74" r="3.5" fill="#1E5799" opacity="0.75"/>
+    <circle cx="138" cy="64" r="2.5" fill="#E8580A" opacity="0.6"/>
+  </svg>`;
+
+  if(lv===2) return `<svg width="${W}" height="${H}" viewBox="0 0 160 230">
+    <defs>
+      <radialGradient id="pb2" cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#3A7BD5"/><stop offset="100%" stop-color="#163F72"/></radialGradient>
+      <radialGradient id="ph2" cx="40%" cy="30%" r="60%"><stop offset="0%" stop-color="#E8E8E8"/><stop offset="100%" stop-color="#B0B8C4"/></radialGradient>
+      <radialGradient id="pf2" cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#FFE0A0"/><stop offset="100%" stop-color="#F5C060"/></radialGradient>
+    </defs>
+    <ellipse cx="80" cy="226" rx="34" ry="6" fill="rgba(0,0,0,0.3)"/>
+    <rect x="57" y="168" width="14" height="35" rx="6" fill="#1A202C"/>
+    <rect x="53" y="194" width="22" height="13" rx="5" fill="#0D1117"/>
+    <rect x="89" y="168" width="14" height="35" rx="6" fill="#1A202C"/>
+    <rect x="85" y="194" width="22" height="13" rx="5" fill="#0D1117"/>
+    <rect x="36" y="104" width="88" height="72" rx="11" fill="url(#pb2)"/>
+    <rect x="36" y="122" width="88" height="30" fill="#fff"/>
+    <text x="80" y="133" text-anchor="middle" font-size="7" font-weight="700" fill="#888" font-family="Arial">PAINTER'S FORGE</text>
+    <text x="80" y="146" text-anchor="middle" font-size="13" font-weight="900" fill="#1E5799" font-family="Arial">PINTO</text>
+    <rect x="33" y="100" width="94" height="9" rx="4" fill="#0D2A52"/>
+    <rect x="35" y="101" width="90" height="5" rx="3" fill="#163F72"/>
+    <rect x="33" y="167" width="94" height="9" rx="4" fill="#0D2A52"/>
+    <rect x="12" y="114" width="28" height="13" rx="6" fill="#2D3748"/>
+    <rect x="0" y="104" width="18" height="26" rx="4" fill="#4A5568"/>
+    <rect x="1" y="105" width="16" height="12" rx="3" fill="#5A6678"/>
+    <path d="M4 116 Q8 124 14 120" fill="none" stroke="#2D3748" stroke-width="2.5" stroke-linecap="round"/>
+    <rect x="-4" y="105" width="8" height="7" rx="3" fill="#718096"/>
+    <circle cx="-9" cy="108" r="3.5" fill="#E8580A" opacity="0.5"/>
+    <circle cx="-14" cy="104" r="2.5" fill="#F6D860" opacity="0.4"/>
+    <circle cx="-13" cy="112" r="2" fill="#E8580A" opacity="0.3"/>
+    <rect x="120" y="114" width="28" height="13" rx="6" fill="#2D3748"/>
+    <rect x="136" y="100" width="20" height="30" rx="5" fill="#1E5799"/>
+    <rect x="134" y="96" width="24" height="8" rx="3" fill="#163F72"/>
+    <path d="M138 96 Q146 86 154 96" fill="none" stroke="#2D3748" stroke-width="3" stroke-linecap="round"/>
+    <rect x="70" y="93" width="20" height="16" rx="5" fill="#163F72"/>
+    <rect x="62" y="93" width="36" height="14" rx="7" fill="#4A5568"/>
+    <circle cx="71" cy="100" r="4" fill="#2D3748"/>
+    <circle cx="89" cy="100" r="4" fill="#2D3748"/>
+    <rect x="46" y="53" width="68" height="48" rx="16" fill="url(#pf2)"/>
+    <rect x="42" y="42" width="76" height="34" rx="14" fill="url(#ph2)"/>
+    <rect x="38" y="66" width="84" height="9" rx="4" fill="#9AA4AE"/>
+    <rect x="36" y="73" width="88" height="4" rx="2" fill="#9AA4AE"/>
+    <rect x="54" y="45" width="44" height="7" rx="3" fill="rgba(255,255,255,0.5)"/>
+    <rect x="44" y="48" width="16" height="10" rx="3" fill="#1E5799" opacity="0.7"/>
+    <text x="52" y="56" text-anchor="middle" font-size="6" font-weight="700" fill="#fff" font-family="Arial">2級</text>
+    <ellipse cx="64" cy="74" rx="8" ry="8" fill="#fff"/>
+    <ellipse cx="96" cy="74" rx="8" ry="8" fill="#fff"/>
+    <circle cx="65" cy="75" r="5.5" fill="#3D2B1A"/>
+    <circle cx="97" cy="75" r="5.5" fill="#3D2B1A"/>
+    <circle cx="65" cy="75" r="3" fill="#1A0E08"/>
+    <circle cx="97" cy="75" r="3" fill="#1A0E08"/>
+    <circle cx="67" cy="73" r="1.8" fill="#fff"/>
+    <circle cx="99" cy="73" r="1.8" fill="#fff"/>
+    <path d="M58 67 Q64 63 70 65" fill="none" stroke="#8B6020" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M90 65 Q96 63 102 67" fill="none" stroke="#8B6020" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M61 86 Q80 95 99 86" fill="none" stroke="#C07030" stroke-width="3" stroke-linecap="round"/>
+    <ellipse cx="55" cy="83" rx="7" ry="5" fill="#FFB3A0" opacity="0.45"/>
+    <ellipse cx="105" cy="83" rx="7" ry="5" fill="#FFB3A0" opacity="0.45"/>
+  </svg>`;
+
+  // lv3
+  return `<svg width="${W}" height="${H}" viewBox="0 0 160 230">
+    <defs>
+      <radialGradient id="pb3" cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#E86020"/><stop offset="100%" stop-color="#8B3508"/></radialGradient>
+      <radialGradient id="ph3" cx="40%" cy="30%" r="60%"><stop offset="0%" stop-color="#FFE580"/><stop offset="100%" stop-color="#C8920A"/></radialGradient>
+      <radialGradient id="pf3" cx="40%" cy="35%" r="60%"><stop offset="0%" stop-color="#FFE0A0"/><stop offset="100%" stop-color="#F0B840"/></radialGradient>
+      <radialGradient id="gaura3" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#E8580A" stop-opacity="0.2"/><stop offset="100%" stop-color="#E8580A" stop-opacity="0"/></radialGradient>
+    </defs>
+    <ellipse cx="80" cy="200" rx="75" ry="80" fill="url(#gaura3)"/>
+    <ellipse cx="80" cy="226" rx="36" ry="6" fill="rgba(232,88,10,0.25)"/>
+    <rect x="55" y="166" width="15" height="37" rx="7" fill="#1A202C"/>
+    <rect x="50" y="193" width="24" height="14" rx="6" fill="#0D1117"/>
+    <rect x="90" y="166" width="15" height="37" rx="7" fill="#1A202C"/>
+    <rect x="86" y="193" width="24" height="14" rx="6" fill="#0D1117"/>
+    <rect x="32" y="100" width="96" height="74" rx="12" fill="url(#pb3)"/>
+    <rect x="32" y="118" width="96" height="34" fill="#F6D860" opacity="0.97"/>
+    <text x="80" y="129" text-anchor="middle" font-size="7" font-weight="700" fill="#8B6020" font-family="Arial">1ST GRADE</text>
+    <text x="80" y="144" text-anchor="middle" font-size="14" font-weight="900" fill="#8B3508" font-family="Arial">PINTO</text>
+    <rect x="29" y="96" width="102" height="10" rx="5" fill="#8B6020"/>
+    <rect x="31" y="97" width="98" height="6" rx="4" fill="#C8920A"/>
+    <rect x="29" y="166" width="102" height="10" rx="5" fill="#8B6020"/>
+    <rect x="32" y="114" width="96" height="2" rx="1" fill="#F6D860" opacity="0.6"/>
+    <rect x="32" y="152" width="96" height="2" rx="1" fill="#F6D860" opacity="0.6"/>
+    <text x="80" y="113" text-anchor="middle" font-size="10" fill="#F6D860" opacity="0.5">★ ★ ★</text>
+    <rect x="8" y="110" width="30" height="14" rx="7" fill="#1A202C"/>
+    <rect x="-4" y="98" width="20" height="32" rx="5" fill="#2D3748"/>
+    <rect x="-3" y="99" width="18" height="16" rx="4" fill="#3D4F62"/>
+    <path d="M2 114 Q6 124 12 120" fill="none" stroke="#1A202C" stroke-width="3" stroke-linecap="round"/>
+    <rect x="-8" y="99" width="8" height="9" rx="3" fill="#4A5568"/>
+    <circle cx="-13" cy="102" r="5" fill="#E8580A" opacity="0.45"/>
+    <circle cx="-18" cy="98" r="3.5" fill="#F6D860" opacity="0.4"/>
+    <circle cx="-18" cy="107" r="3" fill="#E8580A" opacity="0.3"/>
+    <rect x="122" y="110" width="30" height="14" rx="7" fill="#1A202C"/>
+    <rect x="140" y="96" width="22" height="32" rx="6" fill="#F6D860"/>
+    <rect x="138" y="92" width="26" height="9" rx="4" fill="#C8920A"/>
+    <path d="M142 92 Q151 80 160 92" fill="none" stroke="#8B6020" stroke-width="3" stroke-linecap="round"/>
+    <text x="151" y="116" text-anchor="middle" font-size="14" fill="#C8920A">★</text>
+    <rect x="70" y="90" width="20" height="16" rx="5" fill="#8B3508"/>
+    <rect x="44" y="50" width="72" height="50" rx="17" fill="url(#pf3)"/>
+    <rect x="40" y="38" width="80" height="36" rx="15" fill="url(#ph3)"/>
+    <rect x="36" y="64" width="88" height="10" rx="5" fill="#8B6020"/>
+    <rect x="38" y="65" width="84" height="6" rx="3" fill="#C8920A"/>
+    <rect x="34" y="72" width="92" height="5" rx="2" fill="#8B6020"/>
+    <rect x="54" y="41" width="48" height="8" rx="4" fill="rgba(255,255,255,0.35)"/>
+    <circle cx="107" cy="46" r="13" fill="#8B3508"/>
+    <circle cx="107" cy="46" r="11" fill="#C44A08"/>
+    <circle cx="107" cy="46" r="9" fill="none" stroke="#F6D860" stroke-width="1.5"/>
+    <text x="107" y="50" text-anchor="middle" font-size="8" font-weight="900" fill="#F6D860" font-family="Arial">1級</text>
+    <ellipse cx="64" cy="72" rx="8.5" ry="8.5" fill="#fff"/>
+    <ellipse cx="96" cy="72" rx="8.5" ry="8.5" fill="#fff"/>
+    <circle cx="65" cy="73" r="6" fill="#3D2B1A"/>
+    <circle cx="97" cy="73" r="6" fill="#3D2B1A"/>
+    <circle cx="65" cy="73" r="3.5" fill="#1A0E08"/>
+    <circle cx="97" cy="73" r="3.5" fill="#1A0E08"/>
+    <circle cx="67" cy="71" r="2.2" fill="#fff"/>
+    <circle cx="99" cy="71" r="2.2" fill="#fff"/>
+    <path d="M57 64 Q63 60 70 62" fill="none" stroke="#6B4810" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M90 62 Q97 60 103 64" fill="none" stroke="#6B4810" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M62 84 Q80 92 98 84" fill="none" stroke="#B06020" stroke-width="3" stroke-linecap="round"/>
+    <ellipse cx="54" cy="82" rx="7" ry="5" fill="#FFB3A0" opacity="0.35"/>
+    <ellipse cx="106" cy="82" rx="7" ry="5" fill="#FFB3A0" opacity="0.35"/>
+    <circle cx="24" cy="66" r="3" fill="#F6D860" opacity="0.7"/>
+    <circle cx="138" cy="68" r="3" fill="#F6D860" opacity="0.7"/>
+    <line x1="22" y1="54" x2="22" y2="62" stroke="#F6D860" stroke-width="1.5" opacity="0.6"/>
+    <line x1="18" y1="58" x2="26" y2="58" stroke="#F6D860" stroke-width="1.5" opacity="0.6"/>
+    <line x1="138" y1="54" x2="138" y2="62" stroke="#F6D860" stroke-width="1.5" opacity="0.6"/>
+    <line x1="134" y1="58" x2="142" y2="58" stroke="#F6D860" stroke-width="1.5" opacity="0.6"/>
+  </svg>`;
+}
+
+// ─────────────────────────────────────────────
+// XP SYSTEM
+// ─────────────────────────────────────────────
+function addXP(n){
+  const prevLv=getLv();
+  xp=Math.min(100,xp+n);
+  const newLv=getLv();
+  updateXPBar();
+  renderHeroPinto();
+  if(newLv>prevLv) showLevelUp(newLv);
+}
+
+function updateXPBar(){
+  const lv=getLv();
+  const pct=xp;
+  document.getElementById('xp-fill').style.width=pct+'%';
+  const lvNames={ja:{1:'LV.1 見習い',2:'LV.2 一人前',3:'LV.3 職人'},en:{1:'LV.1 Apprentice',2:'LV.2 Journeyman',3:'LV.3 Master'}};
+  document.getElementById('xp-label').textContent='PINTO — '+lvNames[lang][lv];
+  document.getElementById('xp-val').textContent=xp+' / 100 XP';
+}
+
+function renderHeroPinto(){
+  document.getElementById('hero-pinto').innerHTML=pintoSVG(getLv(),88);
+}
+
+function showLevelUp(lv){
+  const msgs={ja:{2:'レベルアップ！ PINTOが一人前になった！',3:'最強！ PINTOが1級職人になった！'},en:{2:'Level up! PINTO became a journeyman!',3:'Master! PINTO reached Grade 1!'}};
+  alert(msgs[lang][lv]||'');
+}
+
+// ─────────────────────────────────────────────
+// COLOR MIXING
+// ─────────────────────────────────────────────
+let lastScore=0;
+
+function hexToRgb(h){return{r:parseInt(h.slice(1,3),16),g:parseInt(h.slice(3,5),16),b:parseInt(h.slice(5,7),16)}}
+function mixRGB(r,y,b,w,k){
+  const t=r+y+b+w+k||1;
+  const rn=r/t,yn=y/t,bn=b/t,wn=w/t,kn=k/t;
+  return{
+    r:Math.min(255,Math.round(rn*220+yn*240+bn*30+wn*255+kn*30)),
+    g:Math.min(255,Math.round(rn*50+yn*200+bn*80+wn*255+kn*30)),
+    b:Math.min(255,Math.round(rn*50+yn*30+bn*210+wn*255+kn*30))
+  };
+}
+function colorDiff(a,b){return Math.sqrt((a.r-b.r)**2+(a.g-b.g)**2+(a.b-b.b)**2)}
+
+function mix(){
+  const R=+document.getElementById('sR').value;
+  const Y=+document.getElementById('sY').value;
+  const B=+document.getElementById('sB').value;
+  const W=+document.getElementById('sW').value;
+  const K=+document.getElementById('sK').value;
+  ['R','Y','B','W','K'].forEach(k=>{document.getElementById('v'+k).textContent=eval(k)+'%'});
+  const m=mixRGB(R,Y,B,W,K);
+  const mc=`rgb(${m.r},${m.g},${m.b})`;
+  document.getElementById('mix-swatch').style.background=mc;
+  const tgt=COLORS[colorIdx];
+  const tr=hexToRgb(tgt.hex);
+  const diff=colorDiff(m,tr);
+  const score=Math.round((1-diff/Math.sqrt(3*255*255))*100);
+  lastScore=score;
+  const fill=document.getElementById('sc-fill');
+  fill.style.width=score+'%';
+  fill.style.background=score>=80?'#1A7A4A':score>=50?'#E8580A':'#C0392B';
+  document.getElementById('sc-num').textContent=score+'/100';
+  updatePintoReaction(score);
+}
+
+function updatePintoReaction(score){
+  const lv=getLv();
+  const el=document.getElementById('color-pinto');
+  el.innerHTML=pintoSVG(lv,70);
+  const msgs={
+    ja:['もっと混ぜてみて！','いい感じ！もう少し！','かなり近い！','ほぼ完璧！','完璧な調色だ！'],
+    en:['Keep mixing!','Getting closer!','Almost there!','Near perfect!','Perfect mix!']
+  };
+  const i=score>=90?4:score>=70?3:score>=50?2:score>=30?1:0;
+  document.getElementById('pinto-speech').textContent=msgs[lang][i];
+  const glow=score>=70?`drop-shadow(0 0 8px rgba(246,216,96,${(score-70)/60})`:`drop-shadow(0 2px 6px rgba(232,88,10,0.3))`;
+  el.querySelector('svg').style.filter=glow;
+}
+
+function loadColor(){
+  const c=COLORS[colorIdx];
+  document.getElementById('tgt-name').textContent=lang==='ja'?c.ja:c.en;
+  document.getElementById('tgt-swatch').style.background=c.hex;
+  document.getElementById('tgt-swatch2').style.background=c.hex;
+  ['sR','sY','sB','sK'].forEach(id=>{document.getElementById(id).value=0});
+  hintsOpened=[false,false,false];
+  document.getElementById('sW').value=100;
+  ['R','Y','B','W','K'].forEach(k=>{
+    const id='s'+k;
+    document.getElementById('v'+k).textContent=document.getElementById(id).value+'%';
+  });
+  mix();
+  renderHintArea();
+}
+
+function nextColor(){
+  if(lastScore>=70) addXP(10);
+  if(lastScore>=90){
+    showScoreOverlay(lastScore);
+    return;
+  }
+  colorIdx=(colorIdx+1)%COLORS.length;
+  loadColor();
+}
+
+function showScoreOverlay(score){
+  document.getElementById('overlay-pinto').innerHTML=pintoSVG(getLv(),100);
+  document.getElementById('overlay-score').textContent=score+'/100';
+  const msgs={ja:{90:'パーフェクト！すごい調色センスだ！',80:'すばらしい！かなり近い色が作れた！',70:'よくできました！もう少しで完璧！'},en:{90:'Perfect! Amazing color sense!',80:'Excellent! Very close match!',70:'Well done! Almost perfect!'}};
+  const key=score>=90?90:score>=80?80:70;
+  document.getElementById('overlay-msg').textContent=msgs[lang][key];
+  document.getElementById('result-overlay').classList.add('on');
+}
+
+function closeOverlay(){
+  document.getElementById('result-overlay').classList.remove('on');
+  colorIdx=(colorIdx+1)%COLORS.length;
+  loadColor();
+}
+
+// ─────────────────────────────────────────────
+// SAFETY
+// ─────────────────────────────────────────────
+function renderSafety(){
+  const list=document.getElementById('safety-list');
+  list.innerHTML=SAFETY[lang].map(s=>`
+    <div class="safety-item">
+      <div class="s-icon" style="background:${s.bg}">${s.icon}</div>
+      <div class="s-body">
+        <h3>${s.title}</h3>
+        <p>${s.desc}</p>
+        <span class="s-tag" style="background:${s.tc}22;color:${s.tc}">${s.tag}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─────────────────────────────────────────────
+// QUIZ
+// ─────────────────────────────────────────────
+function renderQuiz(){
+  const qs=QUIZ[lang];
+  const q=qs[quizIdx];
+  const tot=qs.length;
+  const totLabel = lang==='ja' ? `Q${quizIdx+1} / ${tot}問` : `Q${quizIdx+1} / ${tot}`;
+  document.getElementById('q-num').textContent=totLabel;
+  document.getElementById('q-prog').style.width=((quizIdx+1)/tot*100)+'%';
+  quizAnswered=false;
+  const letters=['A','B','C','D'];
+  const catLabel = lang==='ja'
+    ? `<span class="q-cat">${q.cat}</span><span class="q-lv">${q.lv}</span>`
+    : `<span class="q-cat">${q.cat}</span><span class="q-lv">${q.lv}</span>`;
+  const scHtml = q.sc ? `<div class="scenario">${q.sc}</div>` : '';
+  document.getElementById('quiz-body').innerHTML=`
+    <div class="quiz-card">
+      <div class="q-meta">${catLabel}</div>
+      ${scHtml}
+      <div class="q-text">${q.q}</div>
+      <div class="choices">
+        ${q.cs.map((c,i)=>`
+          <button class="choice" onclick="answer(${i})" id="ch-${i}">
+            <div class="c-letter">${letters[i]}</div>
+            <span>${c}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="explain" id="explain">${q.ex}</div>
+      <button class="next-q" id="next-q" onclick="nextQuiz()">${lang==='ja'?'次の問題 →':'Next question →'}</button>
+    </div>
+  `;
+}
+
+function answer(idx){
+  if(quizAnswered)return;
+  quizAnswered=true;
+  const q=QUIZ[lang][quizIdx];
+  for(let i=0;i<q.cs.length;i++){
+    const btn=document.getElementById('ch-'+i);
+    btn.disabled=true;
+    if(i===q.ok) btn.classList.add('correct');
+    else if(i===idx) btn.classList.add('wrong');
+  }
+  document.getElementById('explain').classList.add('on');
+  document.getElementById('next-q').classList.add('on');
+  if(idx===q.ok) addXP(15);
+}
+
+function nextQuiz(){
+  quizIdx=(quizIdx+1)%QUIZ[lang].length;
+  renderQuiz();
+}
+
+// ─────────────────────────────────────────────
+// LANG / NAV
+// ─────────────────────────────────────────────
+function setLang(l,btn){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  applyText();
+  const sp=document.getElementById('dict-search'); if(sp) sp.placeholder=lang==='ja'?'🔍 検索...':'🔍 Search...';
+  renderSafety();
+  renderQuiz();
+  renderHintArea();
+  renderRoad();
+  renderDictCats();
+  renderDict();
+  loadColor();
+  updateXPBar();
+}
+
+function applyText(){
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    const k=el.getAttribute('data-t');
+    if(TEXT[lang][k]!==undefined) el.innerHTML=TEXT[lang][k];
+  });
+}
+
+function goPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('pg-'+name).classList.add('on');
+  const pages=['home','color','safety','quiz','road','dict'];
+  document.querySelectorAll('.nav-btn')[pages.indexOf(name)].classList.add('on');
+}
+
+
+// ─────────────────────────────────────────────
+// ROADMAP DATA
+// ─────────────────────────────────────────────
+const ROAD = {
+  ja:[
+    {
+      lv:'lv1', badge:'🎓', badgeLv:'STEP 1',
+      badgeBg:'rgba(74,144,217,0.2)',
+      name:'3級 塗装技能士',
+      sub:'入門資格・実務経験不問（訓練中でもOK）',
+      tags:[
+        {t:'実務経験不問',c:'exp'},
+        {t:'受験料 約¥19,000',c:'cost'},
+        {t:'合格率 約50%',c:'pass'},
+      ],
+      costs:[
+        {label:'学科',val:'¥3,100'},
+        {label:'実技',val:'¥16,500'},
+        {label:'合計',val:'¥19,600'},
+      ],
+      detail:'真偽法30題の学科試験＋実技試験（選択作業）。学科は塗装一般・材料・安全衛生。まず現場に出ながら受験できる入門資格。',
+      pinto:1
+    },
+    {
+      lv:'lv2', badge:'⚒️', badgeLv:'STEP 2',
+      badgeBg:'rgba(232,88,10,0.2)',
+      name:'2級 塗装技能士',
+      sub:'実務経験2年以上 または 3級合格者',
+      tags:[
+        {t:'実務2年以上',c:'exp'},
+        {t:'受験料 約¥19,000',c:'cost'},
+        {t:'合格率 約40%',c:'pass'},
+      ],
+      costs:[
+        {label:'学科',val:'¥3,100'},
+        {label:'実技',val:'¥16,500'},
+        {label:'合計',val:'¥19,600'},
+      ],
+      detail:'学科は真偽法＋四肢択一法の50題。実技は建築・金属・木工・鋼橋・噴霧から選択。一発合格率は高くないので早めに着手を。',
+      pinto:1
+    },
+    {
+      lv:'lv3', badge:'🏆', badgeLv:'STEP 3',
+      badgeBg:'rgba(26,122,74,0.2)',
+      name:'1級 塗装技能士',
+      sub:'実務経験7年以上（2級取得後2年、3級取得後4年）',
+      tags:[
+        {t:'実務7年以上',c:'exp'},
+        {t:'受験料 約¥19,000',c:'cost'},
+        {t:'合格率 約40%',c:'pass'},
+        {t:'厚労大臣認定',c:'time'},
+      ],
+      costs:[
+        {label:'学科',val:'¥3,100'},
+        {label:'実技',val:'¥16,500'},
+        {label:'合計',val:'¥19,600'},
+        {label:'35歳以下',val:'最大¥9,000減額'},
+      ],
+      detail:'合格証書は厚生労働大臣名で交付される最高峰の技能資格。大規模工事の受注・資格手当に直結。実技は砂骨ローラー・刷毛塗り・ケガキ等。',
+      pinto:2,
+      highlight:true
+    },
+    {
+      lv:'lv4', badge:'🎨', badgeLv:'STEP 4',
+      badgeBg:'rgba(246,216,96,0.15)',
+      name:'塗料調色技能士（単一等級）',
+      sub:'実務経験3年以上',
+      tags:[
+        {t:'実務3年以上',c:'exp'},
+        {t:'受験料 約¥19,000',c:'cost'},
+        {t:'単一等級・希少資格',c:'pass'},
+      ],
+      costs:[
+        {label:'学科',val:'¥3,100'},
+        {label:'実技',val:'¥16,500'},
+        {label:'合計',val:'¥19,600'},
+      ],
+      detail:'目標色を見て瞬時に原色の配合を判断する専門資格。単一等級で保有者が少ない希少資格。調色の達人への道。',
+      pinto:2,
+      gold:true
+    },
+    {
+      lv:'lv5', badge:'👨‍🏫', badgeLv:'STEP 5',
+      badgeBg:'rgba(155,89,182,0.2)',
+      name:'職業訓練指導員（塗装科）',
+      sub:'1級技能士 または 実務経験15年以上',
+      tags:[
+        {t:'1級取得 or 実務15年',c:'exp'},
+        {t:'受講料 ¥15,000〜22,000',c:'cost'},
+        {t:'都道府県知事免許',c:'time'},
+      ],
+      costs:[
+        {label:'学科',val:'¥3,100'},
+        {label:'受講料',val:'¥15,000〜22,000'},
+        {label:'合計目安',val:'約¥25,000'},
+      ],
+      detail:'塗装職人を育成できる最上位免許。職業訓練校・企業内訓練の指導員として活躍できる。塗装業界の先生への道。',
+      pinto:3
+    },
+  ],
+  en:[
+    {
+      lv:'lv1', badge:'🎓', badgeLv:'STEP 1',
+      badgeBg:'rgba(74,144,217,0.2)',
+      name:'Grade 3 Painting Technician',
+      sub:'No experience required (trainees eligible)',
+      tags:[
+        {t:'No exp. required',c:'exp'},
+        {t:'Fee approx ¥19,000',c:'cost'},
+        {t:'Pass rate ~50%',c:'pass'},
+      ],
+      costs:[
+        {label:'Written',val:'¥3,100'},
+        {label:'Practical',val:'¥16,500'},
+        {label:'Total',val:'¥19,600'},
+      ],
+      detail:'30-question true/false written exam + practical test. Covers painting basics, materials, and safety. The entry-level cert you can sit while still training on the job.',
+      pinto:1
+    },
+    {
+      lv:'lv2', badge:'⚒️', badgeLv:'STEP 2',
+      badgeBg:'rgba(232,88,10,0.2)',
+      name:'Grade 2 Painting Technician',
+      sub:'2+ years experience or Grade 3 pass',
+      tags:[
+        {t:'2 yrs exp.',c:'exp'},
+        {t:'Fee approx ¥19,000',c:'cost'},
+        {t:'Pass rate ~40%',c:'pass'},
+      ],
+      costs:[
+        {label:'Written',val:'¥3,100'},
+        {label:'Practical',val:'¥16,500'},
+        {label:'Total',val:'¥19,600'},
+      ],
+      detail:'50-question written exam (true/false + multiple choice). Practical covers architectural, metal, wood, bridge, or spray painting. First-attempt pass rate is demanding — start early.',
+      pinto:1
+    },
+    {
+      lv:'lv3', badge:'🏆', badgeLv:'STEP 3',
+      badgeBg:'rgba(26,122,74,0.2)',
+      name:'Grade 1 Painting Technician',
+      sub:'7+ years exp. (2 yrs after Grade 2, 4 yrs after Grade 3)',
+      tags:[
+        {t:'7 yrs exp.',c:'exp'},
+        {t:'Fee approx ¥19,000',c:'cost'},
+        {t:'Pass rate ~40%',c:'pass'},
+        {t:'MHLW certified',c:'time'},
+      ],
+      costs:[
+        {label:'Written',val:'¥3,100'},
+        {label:'Practical',val:'¥16,500'},
+        {label:'Total',val:'¥19,600'},
+        {label:'Under 35',val:'Up to ¥9,000 off'},
+      ],
+      detail:'Certificate issued by the Minister of Health, Labour and Welfare — the top-tier painting qualification. Directly tied to large contract eligibility and pay allowances.',
+      pinto:2,
+      highlight:true
+    },
+    {
+      lv:'lv4', badge:'🎨', badgeLv:'STEP 4',
+      badgeBg:'rgba(246,216,96,0.15)',
+      name:'Color Mixing Technician (Single Grade)',
+      sub:'3+ years experience',
+      tags:[
+        {t:'3 yrs exp.',c:'exp'},
+        {t:'Fee approx ¥19,000',c:'cost'},
+        {t:'Rare specialist cert',c:'pass'},
+      ],
+      costs:[
+        {label:'Written',val:'¥3,100'},
+        {label:'Practical',val:'¥16,500'},
+        {label:'Total',val:'¥19,600'},
+      ],
+      detail:'Specialist cert for reading a target color and instantly judging the primary pigment formula. Single-grade, rare, and highly valued in professional mixing.',
+      pinto:2,
+      gold:true
+    },
+    {
+      lv:'lv5', badge:'👨‍🏫', badgeLv:'STEP 5',
+      badgeBg:'rgba(155,89,182,0.2)',
+      name:'Vocational Training Instructor (Painting)',
+      sub:'Grade 1 holder or 15+ years experience',
+      tags:[
+        {t:'Grade 1 or 15 yrs',c:'exp'},
+        {t:'Course fee ¥15,000–22,000',c:'cost'},
+        {t:'Prefectural license',c:'time'},
+      ],
+      costs:[
+        {label:'Written',val:'¥3,100'},
+        {label:'Course',val:'¥15,000–22,000'},
+        {label:'Total est.',val:'~¥25,000'},
+      ],
+      detail:'The top-level license to train other painters. Qualifies you to instruct at vocational schools and in-house training programs. The "master teacher" of the painting world.',
+      pinto:3
+    },
+  ]
+};
+
+function renderRoad(){
+  const data = ROAD[lang];
+  const msgs = {
+    ja:'受験費用は都道府県によって異なります。35歳以下は実技試験料が最大¥9,000減額されます。',
+    en:'Fees vary by prefecture. Applicants under 35 may receive up to ¥9,000 off the practical exam fee.'
+  };
+  const tipMsg = {
+    ja:'💡 <strong>コスパのいいルート：</strong>3級→2年後に2級→さらに5年で1級。同時に実務3年以上で調色技能士も狙えます。',
+    en:'💡 <strong>Recommended route:</strong> Grade 3 → Grade 2 after 2 years → Grade 1 after 5 more. Aim for Color Mixing Technician once you hit 3 years of experience.'
+  };
+  let html = `<p class="road-intro">${msgs[lang]}</p>`;
+  data.forEach((d, i) => {
+    const costsHtml = d.costs.map(c=>`<div class="cost-item"><strong>${c.val}</strong>${c.label}</div>`).join('');
+    const tagsHtml = d.tags.map(t=>`<span class="road-tag ${t.c}">${t.t}</span>`).join('');
+    const cardClass = ['road-card', d.lv, d.highlight?'highlight':'', d.gold?'gold':''].filter(Boolean).join(' ');
+    const connector = i < data.length-1 ? '<div class="road-connector"></div>' : '';
+    html += `
+      <div class="road-step">
+        <div class="${cardClass}">
+          <div class="road-badge" style="background:${d.badgeBg}">
+            <div class="badge-icon">${d.badge}</div>
+            <div class="badge-lv">${d.badgeLv}</div>
+          </div>
+          <div class="road-info">
+            <div class="road-name">${d.name}</div>
+            <div class="road-sub">${d.sub}</div>
+            <div class="road-tags">${tagsHtml}</div>
+            <div class="road-cost-break">${costsHtml}</div>
+            <div class="road-detail">${d.detail}</div>
+          </div>
+        </div>
+        ${connector}
+      </div>
+    `;
+  });
+  html += `<div class="road-tip">${tipMsg[lang]}</div>`;
+  document.getElementById('road-body').innerHTML = html;
+}
+
+
+
+// ─────────────────────────────────────────────
+// DIFFICULTY & HINT SYSTEM
+// ─────────────────────────────────────────────
+let difficulty = 'easy'; // easy / mid / adv
+let hintsOpened = [false, false, false];
+
+function setDiff(d){
+  difficulty = d;
+  ['easy','mid','adv'].forEach(k=>{
+    const btn = document.getElementById('diff-'+k);
+    btn.classList.remove('on');
+  });
+  document.getElementById('diff-'+d).classList.add('on');
+  hintsOpened = [false,false,false];
+  renderHintArea();
+}
+
+function renderHintArea(){
+  const area = document.getElementById('hint-area');
+  if(!area) return;
+  const c = COLORS[colorIdx];
+  const hints = c.hints[lang] || c.hints.ja;
+
+  if(difficulty === 'adv'){
+    area.innerHTML = `<div style="text-align:center;padding:6px;font-size:11px;color:rgba(255,255,255,0.3)">${lang==='ja'?'⭐ 上級モード — ヒントなし':'⭐ Advanced — no hints'}</div>`;
+    return;
+  }
+
+  // HINT STEPS (mid + easy)
+  const stepLabels = {
+    ja:['ヒント1 — メインカラーは？','ヒント2 — 何を加える？','ヒント3 — 仕上げのコツ'],
+    en:['Hint 1 — What\'s the main colour?','Hint 2 — What do you add?','Hint 3 — Final touch']
+  };
+  const labels = stepLabels[lang] || stepLabels.ja;
+
+  let html = `<div class="hint-steps">`;
+  hints.forEach((hint,i)=>{
+    const opened = hintsOpened[i];
+    html += `
+      <div class="hint-step">
+        <button class="hint-step-btn${opened?' open':''}" onclick="openHint(${i})">
+          <div class="hint-num${opened?' opened':''}">${i+1}</div>
+          <span>${labels[i]}</span>
+          <span class="hint-arrow">▶</span>
+        </button>
+        <div class="hint-content${opened?' open':''}">
+          ${hint}
+        </div>
+      </div>`;
+  });
+  html += `</div>`;
+
+  // ANSWER (easy only)
+  if(difficulty === 'easy'){
+    html += `
+    <div class="answer-reveal" style="margin-top:8px">
+      <button class="answer-reveal-btn" onclick="toggleAnswer()">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+        ${lang==='ja'?'配合の答えを見る（入門モード）':'Show the formula (Beginner mode)'}
+      </button>
+      <div class="answer-content" id="answer-content">
+        ${buildAnswerRows(c)}
+        <button class="apply-btn" onclick="applyAnswer()">
+          ${lang==='ja'?'✨ この配合を適用する':'✨ Apply this formula'}
+        </button>
+      </div>
+    </div>`;
+  }
+
+  area.innerHTML = html;
+}
+
+function buildAnswerRows(c){
+  const labels = {
+    r:{ja:'赤',en:'Red'}, y:{ja:'黄',en:'Yellow'},
+    b:{ja:'青',en:'Blue'}, w:{ja:'白',en:'White'}, k:{ja:'黒',en:'Black'}
+  };
+  const colors_map = {r:'#E53E3E',y:'#F6D860',b:'#3182CE',w:'#FFFFFF',k:'#2D3748'};
+  return ['r','y','b','w','k'].map(key=>{
+    const val = c[key];
+    if(val===0) return '';
+    const lbl = labels[key][lang]||labels[key].ja;
+    return `<div class="answer-row">
+      <div class="answer-dot" style="background:${colors_map[key]};border:1px solid rgba(255,255,255,0.2)"></div>
+      <span>${lbl}</span>
+      <strong>${val}%</strong>
+    </div>`;
+  }).join('');
+}
+
+function openHint(idx){
+  hintsOpened[idx] = !hintsOpened[idx];
+  renderHintArea();
+}
+
+function toggleAnswer(){
+  const el = document.getElementById('answer-content');
+  if(el) el.classList.toggle('show');
+}
+
+function applyAnswer(){
+  const c = COLORS[colorIdx];
+  document.getElementById('sR').value = c.r;
+  document.getElementById('sY').value = c.y;
+  document.getElementById('sB').value = c.b;
+  document.getElementById('sW').value = c.w;
+  document.getElementById('sK').value = c.k;
+  mix();
+  // Close answer panel
+  const el = document.getElementById('answer-content');
+  if(el) el.classList.remove('show');
+}
+
+// ─────────────────────────────────────────────
+// DICTIONARY DATA
+// ─────────────────────────────────────────────
+const DICT = [
+  // ── 素地調整 ──
+  {ja:'ケレン',rom:'keren',en:'Surface Preparation',cat:{ja:'素地調整',en:'Surface Prep'},
+   desc:{ja:'塗装前に旧塗膜・錆・汚れ・黒皮を除去する作業の総称。1〜4種に分類される。',
+         en:'General term for removing old paint, rust, dirt and mill scale before coating. Classified into Grades 1–4.'},
+   ex:{ja:'「まずケレン1種でブラストかけてから塗り始めよう」',
+       en:'"Let\'s blast it to Grade 1 before we start painting."'}},
+
+  {ja:'ケレン1種',rom:'keren isshu',en:'Grade 1 — Blast Cleaning',cat:{ja:'素地調整',en:'Surface Prep'},
+   desc:{ja:'ショットブラスト・サンドブラスト等で錆・黒皮・旧塗膜を完全除去する最高グレード。船体・橋梁・タンクに使用。',
+         en:'The highest grade. Complete removal of rust, mill scale and old coatings by blast cleaning. Used on ship hulls, bridges and tanks.'},
+   ex:{ja:'「ISO Sa 2.5相当の面が出るまでブラストしてくれ」',
+       en:'"Blast until you get an ISO Sa 2.5 surface."'}},
+
+  {ja:'ケレン3種',rom:'keren sanshu',en:'Grade 3 — Power/Hand Tool',cat:{ja:'素地調整',en:'Surface Prep'},
+   desc:{ja:'手工具・電動工具で活膜を残しながら劣化塗膜・錆を除去。一般改修塗装に多用。',
+         en:'Removal of deteriorated paint and rust using hand and power tools while leaving sound adhering film intact. Most common in renovation work.'},
+   ex:{ja:'「活膜は残して3種でいいよ、剥がれてるとこだけ落として」',
+       en:'"Grade 3 is fine — keep the sound film and just knock off the loose stuff."'}},
+
+  {ja:'目荒らし',rom:'meara-shi',en:'Surface Roughening',cat:{ja:'素地調整',en:'Surface Prep'},
+   desc:{ja:'塗料の密着力を上げるために素地を意図的に粗くする処理。ブラスト・サンドペーパー・高圧水洗で行う。',
+         en:'Intentionally roughening the substrate to increase paint adhesion. Done by blasting, sandpaper or high-pressure water jetting.'},
+   ex:{ja:'「コンクリートは事前に目荒らししないと塗膜が剥がれるよ」',
+       en:'"If you don\'t roughen the concrete first, the coating will peel."'}},
+
+  {ja:'黒皮',rom:'kurokawa',en:'Mill Scale',cat:{ja:'素地調整',en:'Surface Prep'},
+   desc:{ja:'鉄鋼材の熱間圧延時に生じる酸化鉄（Fe₃O₄）層。防錆塗料の密着を妨げるため除去が必要。',
+         en:'Iron oxide layer (Fe₃O₄) formed on steel during hot rolling. Must be removed as it prevents anti-corrosion primer adhesion.'},
+   ex:{ja:'「新材でも黒皮が残ってたら錆の原因になるから落としてね」',
+       en:'"Even new steel — if mill scale is left on, it will cause rust. Get it off."'}},
+
+  // ── 塗料 ──
+  {ja:'ポットライフ',rom:'potto raifu',en:'Pot Life',cat:{ja:'塗料',en:'Paint'},
+   desc:{ja:'二液形塗料を主剤と硬化剤を混合してから使用可能な時間。温度が高いほど短くなる。超過するとゲル化して使用不能になる。',
+         en:'The time limit after mixing a two-component paint during which it remains usable. Shortens as temperature rises. Once exceeded the paint gels and cannot be used.'},
+   ex:{ja:'「この二液ウレタン、ポットライフ3時間だから急いで塗り切って」',
+       en:'"This two-part urethane has a 3-hour pot life — use it up fast."'}},
+
+  {ja:'シンナー',rom:'shin-naa',en:'Thinner / Solvent',cat:{ja:'塗料',en:'Paint'},
+   desc:{ja:'塗料を希釈する溶剤。塗料の種類に合ったシンナーを使う必要がある。誤ったシンナーは塗膜不良の原因。',
+         en:'Solvent used to thin paint. Must match the paint type — using the wrong thinner causes film defects.'},
+   ex:{ja:'「ラッカーシンナーとウレタンシンナー間違えないように」',
+       en:'"Don\'t mix up lacquer thinner and urethane thinner."'}},
+
+  {ja:'希釈率',rom:'kishaku-ritsu',en:'Dilution Ratio',cat:{ja:'塗料',en:'Paint'},
+   desc:{ja:'塗料に加えるシンナーの割合。5〜10%が一般的。希釈過多はタレ・膜厚不足の原因。',
+         en:'The ratio of thinner added to paint. Typically 5–10%. Over-thinning causes sagging and insufficient film thickness.'},
+   ex:{ja:'「希釈率守らないと膜厚が出ないよ、仕様書確認して」',
+       en:'"Stick to the dilution ratio or you won\'t hit the film thickness. Check the spec."'}},
+
+  {ja:'弱溶剤',rom:'jaku-youzai',en:'Weak Solvent',cat:{ja:'塗料',en:'Paint'},
+   desc:{ja:'石油系溶剤（ミネラルスピリット等）を使用した塗料。旧塗膜を侵しにくく臭気が少ない。改修工事に多用。',
+         en:'Paint using mild petroleum-based solvents (mineral spirits). Less aggressive to existing coatings, lower odour. Common in renovation work.'},
+   ex:{ja:'「既存塗膜残すなら弱溶剤形にしないと膨れるよ」',
+       en:'"If you\'re keeping the existing coat, go weak-solvent — otherwise it will blister."'}},
+
+  {ja:'防錆顔料',rom:'bousabi ganryou',en:'Anti-corrosive Pigment',cat:{ja:'塗料',en:'Paint'},
+   desc:{ja:'金属の腐食を防ぐ顔料。現在はリン酸亜鉛・シアナミド亜鉛系が主流。鉛・クロム系は廃止済み。',
+         en:'Pigment that prevents metal corrosion. Zinc phosphate and zinc cyanamide systems are now standard. Lead/chrome types have been phased out.'},
+   ex:{ja:'「この下塗り、リン酸亜鉛系の防錆顔料入ってるから密着いいよ」',
+       en:'"This primer has zinc phosphate pigment — great adhesion."'}},
+
+  {ja:'顔料',rom:'ganryou',en:'Pigment',cat:{ja:'塗料',en:'Paint'},
+   desc:{ja:'塗料に色・隠蔽力・防錆性を与える粉末状成分。着色顔料・体質顔料・防錆顔料の3種がある。',
+         en:'Powder component that gives paint its colour, hiding power and corrosion resistance. Three types: colouring, extender and anti-corrosive pigments.'},
+   ex:{ja:'「白は酸化チタン顔料の量で隠蔽力が決まる」',
+       en:'"The hiding power of white is determined by how much titanium dioxide pigment is in it."'}},
+
+  // ── 塗装不良 ──
+  {ja:'タレ',rom:'tare',en:'Sagging / Running',cat:{ja:'塗装不良',en:'Defects'},
+   desc:{ja:'塗料が自重で垂れ下がる不良。過塗布・希釈過多・低気温・垂直面への厚塗りが主な原因。',
+         en:'Paint flows downward under its own weight. Caused by over-application, excessive thinning, low temperatures or thick coats on vertical surfaces.'},
+   ex:{ja:'「コーナーにタレが出てる、吐出量絞って」',
+       en:'"There\'s sagging in the corner — reduce your spray output."'}},
+
+  {ja:'ブリスター',rom:'burisutaa',en:'Blistering',cat:{ja:'塗装不良',en:'Defects'},
+   desc:{ja:'塗膜が膨れる不良。素地や塗膜中に残留した水分・溶剤・空気が熱で膨張して塗膜を押し上げる。',
+         en:'Paint film bubbles up. Moisture, solvent or air trapped in the substrate or film expands with heat, pushing the coating up.'},
+   ex:{ja:'「南面にブリスターが出てる、乾燥時間が足りなかったかも」',
+       en:'"There\'s blistering on the south face — probably not enough drying time."'}},
+
+  {ja:'ピンホール',rom:'pin hooru',en:'Pinhole',cat:{ja:'塗装不良',en:'Defects'},
+   desc:{ja:'塗膜に生じる針穴状の欠陥。多孔質素地の気孔内空気・水分が塗布熱で膨張し塗膜を突き破って生じる。',
+         en:'Tiny holes in the cured film. Air or moisture in substrate pores expands during coating application, piercing the film.'},
+   ex:{ja:'「コンクリ面にピンホールが出やすいからシーラー厚めに入れて」',
+       en:'"Pinholes come up easily on concrete — put the sealer on thick."'}},
+
+  {ja:'チョーキング',rom:'chookingu',en:'Chalking',cat:{ja:'塗装不良',en:'Defects'},
+   desc:{ja:'紫外線・雨水で塗膜表面が粉化する経年劣化現象。塗膜寿命末期のサイン。再塗装のタイミング。',
+         en:'Surface of the paint film breaks down into chalk-like powder due to UV and rain. A sign the coating has reached end of service life.'},
+   ex:{ja:'「手で触ったら白い粉がつく、チョーキングが始まってる」',
+       en:'"White powder comes off when you touch it — chalking has started."'}},
+
+  {ja:'クラック',rom:'kurakku',en:'Cracking',cat:{ja:'塗装不良',en:'Defects'},
+   desc:{ja:'塗膜に亀裂が生じる劣化。硬化収縮・下地の動き・過厚塗りが原因。ヘアークラックも含む。',
+         en:'Cracks in the paint film. Caused by curing shrinkage, substrate movement or excessive film thickness. Includes hairline cracks.'},
+   ex:{ja:'「外壁にクラックが入ってる、シール処理してから塗らないと」',
+       en:'"There are cracks in the wall — seal them before painting."'}},
+
+  {ja:'密着不良',rom:'mitchaku furyou',en:'Poor Adhesion',cat:{ja:'塗装不良',en:'Defects'},
+   desc:{ja:'塗膜が素地・旧塗膜から剥離する不良。素地の汚染・乾燥不足・不適切な塗料選定が主因。',
+         en:'Paint film peels from the substrate or previous coat. Main causes: surface contamination, insufficient drying or wrong paint selection.'},
+   ex:{ja:'「密着不良は素地処理が甘いときに出る、ケレンしっかりやって」',
+       en:'"Poor adhesion comes from sloppy surface prep — do the keren properly."'}},
+
+  {ja:'はけ目',rom:'hake-me',en:'Brush Mark',cat:{ja:'塗装不良',en:'Defects'},
+   desc:{ja:'刷毛跡が塗膜に残る現象。塗料粘度が高い・刷毛品質・塗り方が原因。希釈で改善できる場合が多い。',
+         en:'Brush strokes left visible in the cured film. Caused by high paint viscosity, brush quality or technique. Often improved by slightly thinning the paint.'},
+   ex:{ja:'「仕上げ面にはけ目が残ってる、もう少し薄めて塗って」',
+       en:'"You can see brush marks in the finish — thin it down a bit more."'}},
+
+  // ── 工程 ──
+  {ja:'下塗り',rom:'shita-nuri',en:'Primer / Undercoat',cat:{ja:'工程',en:'Process'},
+   desc:{ja:'素地に最初に塗る塗料。密着性確保・防錆・上塗りの吸い込み防止が目的。プライマーとも呼ぶ。',
+         en:'The first coat applied to the substrate. Its purpose is adhesion, rust prevention and sealing the surface for the topcoat. Also called "primer".'},
+   ex:{ja:'「下塗りなしで中塗り入れても意味ないよ」',
+       en:'"Putting the mid-coat on without a primer is pointless."'}},
+
+  {ja:'中塗り',rom:'naka-nuri',en:'Intermediate Coat',cat:{ja:'工程',en:'Process'},
+   desc:{ja:'下塗りと上塗りの間の塗膜。膜厚確保・上塗りの発色改善が目的。サーフェーサーとも呼ぶ。',
+         en:'Coat applied between primer and topcoat. Its purpose is to build film thickness and improve topcoat colour development. Also called "surfacer".'},
+   ex:{ja:'「中塗り2回入れて膜厚稼いでおいて」',
+       en:'"Put two coats of mid-coat on to build up the thickness."'}},
+
+  {ja:'上塗り',rom:'uwa-nuri',en:'Topcoat / Finish Coat',cat:{ja:'工程',en:'Process'},
+   desc:{ja:'最終仕上げの塗料。色・艶・耐候性・意匠性を決める。2回塗りが一般的。',
+         en:'The final coat. Determines colour, gloss, weather resistance and appearance. Two coats is standard.'},
+   ex:{ja:'「上塗り1回目はムラ出ても大丈夫、2回目できれいに仕上げて」',
+       en:'"Some unevenness on the first topcoat is fine — make it perfect on the second."'}},
+
+  {ja:'養生',rom:'youjou',en:'Masking / Protection',cat:{ja:'工程',en:'Process'},
+   desc:{ja:'塗装しない部分を汚れから保護するテープ・シートの作業。養生の質が仕上がりの美観を左右する。',
+         en:'Covering areas that should not be painted using masking tape and protective sheeting. The quality of masking directly affects the finish appearance.'},
+   ex:{ja:'「養生がしっかりできてないと後始末が大変になるよ」',
+       en:'"If the masking isn\'t tight, the clean-up will take forever."'}},
+
+  {ja:'膜厚',rom:'makuatsu',en:'Film Thickness (DFT)',cat:{ja:'工程',en:'Process'},
+   desc:{ja:'乾燥後の塗膜の厚さ。単位はμm（マイクロメートル）。仕様書の膜厚を下回ると防食性・耐久性が不足する。',
+         en:'Thickness of the dried paint film, measured in μm. Falling below the specified DFT reduces corrosion resistance and service life.'},
+   ex:{ja:'「膜厚計で確認したら50μmしかない、仕様は80μmだよ」',
+       en:'"The gauge reads 50 μm — the spec calls for 80."'}},
+
+  {ja:'乾燥時間',rom:'kansou jikan',en:'Drying Time',cat:{ja:'工程',en:'Process'},
+   desc:{ja:'次工程に進む前に塗膜を乾燥・硬化させる必要がある時間。気温・湿度・膜厚によって変わる。',
+         en:'Time required for a coat to dry before the next step. Varies with temperature, humidity and film thickness. Always follow the spec sheet.'},
+   ex:{ja:'「乾燥時間は気温で変わるから、冬は長めに取って」',
+       en:'"Drying time changes with temperature — give it longer in winter."'}},
+
+  {ja:'塗り重ね間隔',rom:'nuri-kasane kankaku',en:'Recoat Interval',cat:{ja:'工程',en:'Process'},
+   desc:{ja:'次の塗膜を重ねるまでの待機時間。最短と最長の両方が規定されており、どちらも守る必要がある。',
+         en:'The waiting time before applying the next coat. Both minimum and maximum intervals are specified — both must be observed.'},
+   ex:{ja:'「塗り重ね間隔オーバーしてたら足付け処理してから塗って」',
+       en:'"If you\'ve gone over the recoat window, scuff the surface before you paint."'}},
+
+  // ── 色彩 ──
+  {ja:'調色',rom:'chyoushoku',en:'Color Mixing / Tinting',cat:{ja:'色彩',en:'Color'},
+   desc:{ja:'原色を混ぜて指定の色を作る作業。乾燥後に色が変わることを考慮する必要がある。調色技能士の専門分野。',
+         en:'Blending base pigments to produce the specified colour. The dry colour shifts from the wet colour — this must be accounted for. The specialty of a Colour Mixing Technician.'},
+   ex:{ja:'「この色、日塗工の番号ないから自分で調色しないといけない」',
+       en:'"There\'s no JPMA code for this colour — we\'ll have to mix it ourselves."'}},
+
+  {ja:'マンセル値',rom:'manseru chi',en:'Munsell Notation',cat:{ja:'色彩',en:'Color'},
+   desc:{ja:'色を色相(H)・明度(V)・彩度(C)で表す表色系。H V/Cの形式（例：5R 4/14）。明度は0(黒)〜10(白)。',
+         en:'A colour system expressing hue (H), value (V) and chroma (C) in the format H V/C (e.g. 5R 4/14). Value runs from 0 (black) to 10 (white).'},
+   ex:{ja:'「マンセル値5Y 8/4って何色？　黄色系の薄い色だよ」',
+       en:'"What\'s Munsell 5Y 8/4? It\'s a light yellowish colour."'}},
+
+  {ja:'日塗工番号',rom:'nittokō bangou',en:'JPMA Color Code',cat:{ja:'色彩',en:'Color'},
+   desc:{ja:'日本塗料工業会（JPMA）が発行する塗料用標準色の番号。塗装仕様書の色指定に使われる。2年ごとに改版。',
+         en:'Colour code from the Japan Paint Manufacturers Association (JPMA) Standard Colour Chart. Used to specify colours in painting specifications. Revised every 2 years.'},
+   ex:{ja:'「日塗工の19-75Bってどんな色か色票で確認しといて」',
+       en:'"Check the colour chart to see what JPMA 19-75B looks like."'}},
+
+  {ja:'補色',rom:'hoshoku',en:'Complementary Colour',cat:{ja:'色彩',en:'Color'},
+   desc:{ja:'色相環で正反対に位置する色の組み合わせ。混ぜると無彩色（灰色）に近づく。調色で彩度を落とすときに使うテクニック。',
+         en:'Colours opposite each other on the colour wheel. Mixed they move toward achromatic grey. A useful tinting technique for reducing chroma.'},
+   ex:{ja:'「補色を少し混ぜると彩度を落とせる、調色の基本テクニック」',
+       en:'"Add a touch of the complementary to knock the chroma back — basic tinting technique."'}},
+
+  {ja:'明度',rom:'meido',en:'Value (Lightness)',cat:{ja:'色彩',en:'Color'},
+   desc:{ja:'色の明るさを表す属性。マンセル系では0（黒）〜10（白）の11段階。数値が大きいほど明るい。',
+         en:'The lightness attribute of a colour. In the Munsell system: 0 (black) to 10 (white) in 11 steps. Higher numbers = lighter.'},
+   ex:{ja:'「明度上げたいなら白を足して」',
+       en:'"To raise the value, add white."'}},
+
+  {ja:'彩度',rom:'saido',en:'Chroma (Saturation)',cat:{ja:'色彩',en:'Color'},
+   desc:{ja:'色の鮮やかさを表す属性。マンセル系では0（無彩色）から最大14程度。数値が大きいほど鮮やか。',
+         en:'The vividness attribute of a colour. In the Munsell system: 0 (achromatic) up to about 14. Higher numbers = more vivid.'},
+   ex:{ja:'「彩度が高すぎると現場では目立ちすぎる、少し落として」',
+       en:'"Too high a chroma stands out too much on site — bring it down a touch."'}},
+
+  // ── 安全 ──
+  {ja:'防毒マスク',rom:'boudoku masuku',en:'Chemical Cartridge Respirator',cat:{ja:'安全',en:'Safety'},
+   desc:{ja:'有機溶剤・有害ガスを吸収缶で除去する呼吸用保護具。吸収缶の種類・交換時期・フィットテストを確認すること。',
+         en:'Respiratory protection that filters organic solvents and harmful gases through replaceable cartridges. Check cartridge type, replacement schedule and fit.'},
+   ex:{ja:'「有機溶剤使うときは必ず防毒マスク着けて、フィルター確認した？」',
+       en:'"Always wear the respirator when using solvents. Have you checked the filter?"'}},
+
+  {ja:'フルハーネス',rom:'furu hanesu',en:'Full-body Harness',cat:{ja:'安全',en:'Safety'},
+   desc:{ja:'胴体・肩・腿を一体的に支持する墜落防止用安全帯。2m以上の高所作業で2022年から義務化。',
+         en:'A fall-arrest harness supporting the torso, shoulders and thighs as one system. Mandatory for work at 2 m or above since January 2022.'},
+   ex:{ja:'「2m以上の作業はフルハーネス必須、腰ベルトはもう使えない」',
+       en:'"Full-body harness is required above 2 m — waist belts are no longer allowed."'}},
+
+  {ja:'引火点',rom:'inka-ten',en:'Flash Point',cat:{ja:'安全',en:'Safety'},
+   desc:{ja:'塗料・シンナーが点火源で引火する最低温度。ラッカー系は−20℃前後と極めて低く、火気・静電気は厳禁。',
+         en:'Minimum temperature at which paint or thinner vapour will ignite from an ignition source. Lacquer thinner flashes around −20°C — no ignition sources nearby.'},
+   ex:{ja:'「ラッカーシンナーは引火点が低いから、グラインダーと同時作業は絶対ダメ」',
+       en:'"Lacquer thinner flashes at −20°C — absolutely no grinder work nearby."'}},
+
+  {ja:'酸素欠乏',rom:'sanso ketsubou',en:'Oxygen Deficiency',cat:{ja:'安全',en:'Safety'},
+   desc:{ja:'酸素濃度が18%未満の危険な状態。船倉・タンク・ピット内で発生しやすく、短時間で意識喪失・死亡の危険がある。',
+         en:'A dangerous condition where O₂ falls below 18%. Common in ship holds, tanks and pits. Can cause loss of consciousness and death within minutes.'},
+   ex:{ja:'「タンクに入る前に必ず酸素濃度計で18%以上確認して」',
+       en:'"Always confirm O₂ ≥ 18% with a meter before anyone enters the tank."'}},
+
+  {ja:'TLV（許容濃度）',rom:'tī eru bui (kyoyou nodo)',en:'TLV — Threshold Limit Value',cat:{ja:'安全',en:'Safety'},
+   desc:{ja:'有害物質の作業環境中の許容濃度。トルエン50ppm・キシレン50ppmなど。超えないよう作業環境測定・管理が義務。',
+         en:'Maximum permissible concentration of a hazardous substance in the work environment. e.g. toluene 50 ppm, xylene 50 ppm. Workplace air monitoring is mandatory.'},
+   ex:{ja:'「作業環境測定でTLV超えたら即作業中止だよ」',
+       en:'"If monitoring shows TLV exceeded, stop work immediately."'}},
+  // ── 現場スラング（激レア） ──
+  {ja:'ネタ',rom:'neta',en:'Paint / Material',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'塗料全般を指す現場用語。「ネタを練る」は塗料を混ぜること。職人同士の会話で日常的に使われる。',
+         en:'Field term for paint or coating materials in general. "Neta wo neru" means mixing paint. Used casually among painters on site.'},
+   ex:{ja:'「ネタ足りなくなってきた、追加で持ってきて」',
+       en:'"We\'re running low on neta — go grab some more."'}},
+
+  {ja:'シャブい',rom:'shabui',en:'Too Thin / Over-thinned',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'塗料が規定以上に薄められており、シャバシャバな状態。タレや膜厚不足の原因になる。「シャブ」とも呼ぶ。',
+         en:'Paint that has been thinned beyond the specified ratio — too watery. Causes sagging and insufficient film thickness. Also called "shabu".'},
+   ex:{ja:'「このネタ、シャブすぎる。膜厚出えへんぞ」',
+       en:'"This paint is way too thin — you won\'t hit the film thickness."'}},
+
+  {ja:'ダメ拾い',rom:'dame hiroi',en:'Touch-up / Defect Correction',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'塗り残し・はみ出し・ムラなどの不良箇所（ダメ）を見つけて補修する作業。仕上げ前の最終確認作業。',
+         en:'The process of finding and repairing defects such as missed spots, overspray or uneven areas before final handover. Essential final quality check.'},
+   ex:{ja:'「全体塗り終わったら、ダメ拾いをしっかりやっておいて」',
+       en:'"Once the main coat is done, go through and do a thorough dame hiroi."'}},
+
+  {ja:'コミ',rom:'komi',en:'Thick / High-viscosity Paint',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'塗料の粘度が高く、ドロドロで濃い状態。シャブいの反対。ローラー塗りでは適度なコミが必要。',
+         en:'Paint that is thick and viscous — high viscosity. The opposite of shabui (over-thinned). A certain degree of komi is needed for roller application.'},
+   ex:{ja:'「このネタ、コミすぎてローラーが重い。少しシンナー足して」',
+       en:'"This paint is too thick — the roller is dragging. Add a little thinner."'}},
+
+  {ja:'カラス',rom:'karasu',en:'Bristle Tips (of a brush)',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'刷毛（ハケ）の毛先の呼び名。カラスが痛むと塗りムラが出る。刷毛の手入れはカラスを意識して行う。',
+         en:'The tip of the bristles on a paintbrush. When the karasu (tips) are damaged or worn, the finish becomes uneven. Brush care focuses on maintaining the karasu.'},
+   ex:{ja:'「その刷毛、カラスがバラけてる。新しいの使って」',
+       en:'"The bristle tips on that brush are splayed — use a new one."'}},
+
+  {ja:'けなみ',rom:'kenami',en:'Day Off / Rest Day',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'休みのこと。建設・塗装現場で古くから使われる職人言葉。地域によって「けなし」とも言う。',
+         en:'A day off or rest day. An old tradesman\'s term used on construction and painting sites. In some regions also said as "kenashi".'},
+   ex:{ja:'「明日はけなみやから、道具の手入れしといて」',
+       en:'"Tomorrow is kenami, so get your tools cleaned and sorted."'}},
+  {ja:'ピンコロ',rom:'pin koro',en:'Single Coat',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'1回塗りのこと。数の符丁で「1」をピンと呼ぶことから。2回塗りは「リャンコ」。',
+         en:'A single coat of paint. From the coded number system where "pin" means 1. Two coats is "ryank\u014d".'},
+   ex:{ja:'「今日はピンコロで仕上げる、時間ないから」',
+       en:'"We\'re doing a single coat today — no time for two."'}},
+
+  {ja:'リャンコ',rom:'ryank\u014d',en:'Two Coats / Double Coat',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'2回塗りのこと。「両個（りゃんこ）」が語源。「リャンコを回る」は2回塗りで仕上げること。',
+         en:'Two coats of paint. From "ryank\u014d" (both/two). "Ryank\u014d wo mawaru" means to go around applying the second coat.'},
+   ex:{ja:'「この面はリャンコで仕上げてくれ」',
+       en:'"Give this surface two coats."'}},
+
+  {ja:'おもちゃ',rom:'omocha',en:'Tools / Equipment',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'仕事道具全般のこと。刷毛・ローラー・スプレーガンなどの塗装器具を指す。作業服は「ゴト着」。',
+         en:'General term for work tools and equipment — brushes, rollers, spray guns, etc. Work clothes are called "gotogi".'},
+   ex:{ja:'「おもちゃ全部積んだか確認して」',
+       en:'"Check that all the omocha is loaded up."'}},
+
+  {ja:'ノッコミ',rom:'nokkomi',en:'First Day on Site',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'現場初日のこと。新しい現場に乗り込む（ノッコム）ことから。準備・段取りが重要な日。',
+         en:'The first day entering a new job site. From "nokkomu" (to climb into/board). The day when setup and preparation are critical.'},
+   ex:{ja:'「明日がノッコミだから、道具の準備しっかりしておいて」',
+       en:'"Tomorrow is nokkomi — make sure all the tools are properly prepped."'}},
+
+  {ja:'シカツ',rom:'shikatsu',en:'Beautiful Finish / Clean Result',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'仕上がりが美しい・きれいな状態のこと。「イタい」（仕上がりが悪い）の対義語。',
+         en:'A beautiful, clean finish. The opposite of "itai" (a poor finish). A compliment for quality workmanship.'},
+   ex:{ja:'「おー、シカツに仕上がったな！」',
+       en:'"Nice — that\'s a shikatsu finish!"'}},
+
+  {ja:'イタい',rom:'itai',en:'Poor Finish / Ugly Result',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'仕上がりや見栄えが悪いこと。「シカツ」の反対。ムラ・タレ・ピンホールなどがある状態。',
+         en:'A poor or unsightly finish. Opposite of "shikatsu". Used when there are streaks, sags, pinholes or other defects.'},
+   ex:{ja:'「その面、イタいぞ。もう一回やり直して」',
+       en:'"That surface looks itai — do it again."'}},
+
+  {ja:'チャンコー',rom:'chank\u014d',en:'Boss / Foreman / Client',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'親方・現場監督のこと。時には施主（お客様）を指すこともある。「偉い人・上の人」全般に使われる。',
+         en:'The foreman, site supervisor, or sometimes the client. Used for anyone senior or in charge on site.'},
+   ex:{ja:'「チャンコーが来る前に片付けておけ」',
+       en:'"Get it tidied up before the chank\u014d arrives."'}},
+
+  {ja:'あんちゃん',rom:'anchan',en:'Apprentice / New Guy',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'見習い職人・新人のこと。経験の浅い若手職人を指す。親しみを込めて使われることが多い。',
+         en:'An apprentice or new painter. Refers to young or inexperienced workers. Usually used affectionately.'},
+   ex:{ja:'「あんちゃん、ネタ持ってきてくれ」',
+       en:'"Hey anchan, bring me some more paint."'}},
+
+  {ja:'マブ',rom:'mabu',en:'True / Real / Genuine',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'本物・本当のこと。「マブいネタ」は良質な塗料。転じて「本気・真剣」の意味でも使われる。',
+         en:'Real, genuine, or high quality. "Mabu neta" means good quality paint. Also used to mean "serious" or "for real".'},
+   ex:{ja:'「このネタ、マブいか？偽物じゃないよな？」',
+       en:'"Is this mabu? Not a fake brand, right?"'}},
+
+  {ja:'耳を切る',rom:'mimi wo kiru',en:'Cutting the Edge',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'ローラー塗装でローラー端のムラを消す仕上げ動作のこと。端部をきれいに整える技術。',
+         en:'The technique of eliminating roller-edge marks at the end of a stroke. Essential skill for a clean roller finish.'},
+   ex:{ja:'「端っこは耳を切るようにして、きれいに仕上げて」',
+       en:'"Clean up the edges — cut the ears properly."'}},
+
+  {ja:'シャリ',rom:'shari',en:'Masking Sheet / Drop Sheet',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'養生に使う薄手のビニールシートのこと。「シャリシャリ」した音が語源とも言われる。',
+         en:'Thin plastic sheeting used for masking and protection. Said to come from the "shari-shari" rustling sound it makes.'},
+   ex:{ja:'「シャリ足りなくなってきた、追加で持ってきて」',
+       en:'"We\'re running low on shari — bring some more."'}},
+
+  {ja:'馬',rom:'uma',en:'Sawhorse / Stepladder',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'脚立のこと。「キャタ」「キャタコー」とも言う。形が馬に似ていることから。',
+         en:'A stepladder or sawhorse. Also called "kyata" or "kyatako". Named for its resemblance to a horse\'s legs.'},
+   ex:{ja:'「馬持ってきて、上の方が届かない」',
+       en:'"Bring the uma — I can\'t reach the top."'}},
+
+  {ja:'ドーコー',rom:'d\u014dk\u014d',en:'18-Litre Can (Itto-can)',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'一斗缶（18リットル缶）のこと。塗料の大型容器として現場でよく使われる。',
+         en:'An 18-litre paint can (itto-can). The standard large container for paint on site.'},
+   ex:{ja:'「ドーコーごと持ってきて、バケツに移すから」',
+       en:'"Bring the whole d\u014dk\u014d — I\'ll pour it into the bucket."'}},
+
+  {ja:'ゴト',rom:'goto',en:'Job / Work',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'仕事・作業のこと。「ゴト着」は作業服。「ゴトに行く」は仕事に行くこと。',
+         en:'Work or the job. "Gotogi" means work clothes. "Goto ni iku" means going to work.'},
+   ex:{ja:'「今日のゴト、何時から？」',
+       en:'"What time does the goto start today?"'}},
+
+  {ja:'アケ',rom:'ake',en:'Day Off (no work available)',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'仕事がなくなって休みになること。天候不順のけなみとは異なり、仕事量がなくなった場合の休み。',
+         en:'A day off due to no work being available. Different from "kenami" (weather day off) — this means there\'s simply no work to do.'},
+   ex:{ja:'「明日はアケになった、次の現場は来週から」',
+       en:'"Tomorrow is ake — the next job doesn\'t start till next week."'}},
+
+  {ja:'お湯',rom:'oyu',en:'Pay / Wages',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'給料のこと。給料日を「お湯日」と言うこともある。「お湯をもらう」は給料をもらうこと。',
+         en:'Wages or pay. Payday is called "oyubi". "Oyu wo morau" means to receive your pay.'},
+   ex:{ja:'「今月のお湯、いつ出る？」',
+       en:'"When does the oyu come this month?"'}},
+
+  {ja:'しゃぶる',rom:'shaburu',en:'To Thin (paint)',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'塗料をシンナーや水で希釈すること。「このネタをしゃぶってこい」はシンナーで薄めてくるよう指示する言葉。',
+         en:'To thin paint with solvent or water. "Kono neta wo shabure" means "go thin this paint down". Sounds strange to outsiders!'},
+   ex:{ja:'「もう少しシャブって、スプレーで吹きやすくして」',
+       en:'"Thin it down a bit more so it sprays easier."'}},
+
+  {ja:'逃げる',rom:'nigeru',en:'To Clear Out / Finish Up',cat:{ja:'現場スラング',en:'Field Slang'},
+   desc:{ja:'次の業者が入る前に自分たちの作業を終わらせて現場を出ること。工程調整の重要な概念。',
+         en:'To finish up and clear out before the next trade arrives on site. An important concept in trade scheduling.'},
+   ex:{ja:'「電気屋が来る前に逃げないといけない、急いで」',
+       en:'"We need to nigeru before the electricians arrive — hurry up."'}},
+];
+
+
+let dictCat = 'ALL';
+let dictSearch = '';
+
+function renderDictCats(){
+  // Build cat list from ja keys (canonical)
+  const catKeys = ['ALL', ...new Set(DICT.map(d=>typeof d.cat==='object'?d.cat.ja:d.cat))];
+  const catDisplay = (k)=>{
+    if(k==='ALL') return lang==='ja'?'すべて':'All';
+    if(lang==='en'){
+      const found = DICT.find(d=>(typeof d.cat==='object'?d.cat.ja:d.cat)===k);
+      return found&&typeof found.cat==='object'?found.cat.en:k;
+    }
+    return k;
+  };
+  document.getElementById('dict-cats').innerHTML = catKeys.map(c=>`
+    <button class="dict-cat-btn${c===dictCat?' on':''}" onclick="setDictCat('${c}')">${catDisplay(c)}</button>
+  `).join('');
+}
+
+function setDictCat(cat){
+  dictCat = cat; // canonical key is always ja
+  renderDictCats();
+  renderDict();
+}
+
+function filterDict(){
+  dictSearch = document.getElementById('dict-search').value.toLowerCase();
+  renderDict();
+}
+
+function renderDict(){
+  let items = DICT;
+  if(dictCat !== 'ALL') items = items.filter(d=>(typeof d.cat==='object'?d.cat.ja:d.cat)===dictCat);
+  if(dictSearch) items = items.filter(d=>{
+    const desc = typeof d.desc==='object'?d.desc.ja+' '+d.desc.en:d.desc;
+    return d.ja.toLowerCase().includes(dictSearch)||
+           d.en.toLowerCase().includes(dictSearch)||
+           desc.toLowerCase().includes(dictSearch);
+  });
+
+  if(!items.length){
+    document.getElementById('dict-body').innerHTML=`<div class="dict-empty">${lang==='ja'?'該当する用語がありません':'No terms found'}</div>`;
+    return;
+  }
+
+  document.getElementById('dict-body').innerHTML = items.map((d,i)=>{
+    const idx = DICT.indexOf(d);
+    const catLabel = typeof d.cat==='object' ? d.cat[lang]||d.cat.ja : d.cat;
+    const descText = typeof d.desc==='object' ? d.desc[lang]||d.desc.ja : d.desc;
+    const exText   = typeof d.ex  ==='object' ? d.ex[lang]  ||d.ex.ja   : d.ex;
+    const exLabel  = lang==='ja' ? '現場の声：' : 'Field usage: ';
+    const mainTitle = lang==='en' ? d.en : d.ja;
+    const subTitle  = lang==='en' ? `${d.ja} <span class="dict-rom">${d.rom}</span>` : `${d.en} <span class="dict-rom">${d.rom}</span>`;
+    return `
+    <div class="dict-card" onclick="toggleDict(${idx})">
+      <div class="dict-top">
+        <div class="dict-ja">${mainTitle}</div>
+        <div class="dict-cat-tag">${catLabel}</div>
+      </div>
+      <div class="dict-sub">${subTitle}</div>
+      <div class="dict-expand" id="dict-exp-${idx}">
+        <div class="dict-body">${descText}</div>
+        <div class="dict-example">${exLabel}${exText}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Show desc by default (no toggle on first render)
+  document.querySelectorAll('.dict-expand').forEach(el=>el.classList.add('open'));
+}
+
+function toggleDict(idx){
+  const el = document.getElementById('dict-exp-'+idx);
+  if(el) el.classList.toggle('open');
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+applyText();
+renderHeroPinto();
+loadColor();
+renderSafety();
+renderQuiz();
+renderHintArea();
+renderRoad();
+renderDictCats();
+renderDict();
+updateXPBar();
+</script>
+</body>
+</html>
