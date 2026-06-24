@@ -1096,7 +1096,7 @@ function skRender(){
   const q=skQuestions[skQ];
   skAnswered=false;
   document.getElementById('sk-qnum').textContent=`Q${skQ+1}/${skQuestions.length}`;
-  document.getElementById('sk-q').textContent=q.q;
+  document.getElementById('sk-q').innerHTML=addRuby(q.q);
   const choicesEl=document.getElementById('sk-choices');
   choicesEl.innerHTML='';
   const idx=shuffleArray([0,1,2,3].slice(0,q.cs.length));
@@ -1104,7 +1104,7 @@ function skRender(){
   idx.forEach((origIdx,dispIdx)=>{
     const btn=document.createElement('button');
     btn.style.cssText='width:100%;background:#1e2d4a;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:12px 14px;color:#fff;font-size:13px;text-align:left;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:8px;';
-    btn.innerHTML=`<span style="font-family:monospace;font-weight:700;color:${skExam.color}">${['A','B','C','D'][dispIdx]}</span>${q.cs[origIdx]}`;
+    btn.innerHTML=`<span style="font-family:monospace;font-weight:700;color:${skExam.color}">${['A','B','C','D'][dispIdx]}</span>${addRuby(q.cs[origIdx])}`;
     btn.onclick=()=>skAnswer(dispIdx,newOk,q.ex);
     choicesEl.appendChild(btn);
   });
@@ -1123,12 +1123,12 @@ function skAnswer(i,okIdx,explain){
     btns[i].style.borderColor='#C0392B';btns[i].style.background='rgba(192,57,43,0.2)';
     skHP--; document.getElementById('sk-hp').textContent=skHP;
     if(skHP<=0){
-      document.getElementById('sk-explain').textContent=explain;
+      document.getElementById('sk-explain').innerHTML=addRuby(explain);
       document.getElementById('sk-explain').style.display='block';
       setTimeout(()=>skEnd(false),1500); return;
     }
   }
-  document.getElementById('sk-explain').textContent=explain;
+  document.getElementById('sk-explain').innerHTML=addRuby(explain);
   document.getElementById('sk-explain').style.display='block';
   document.getElementById('sk-next').style.display='block';
   document.getElementById('sk-next').textContent=skQ+1>=skQuestions.length?'📊 結果へ':'次の問題 →';
@@ -1561,6 +1561,51 @@ function renderSafety(){
 // ─────────────────────────────────────────────
 // QUIZ
 // ─────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// FURIGANA（ふりがな）
+// ─────────────────────────────────────────────
+const RUBY_MAP=[
+  ['塗装技能士','とそうぎのうし'],['技能検定','ぎのうけんてい'],['技能士','ぎのうし'],
+  ['塗装','とそう'],['塗料','とりょう'],['塗膜','とまく'],['塗布','とふ'],['塗り重ね','ぬりかさね'],
+  ['素地調整','そじちょうせい'],['素地','そじ'],['下塗り','したぬり'],['中塗り','なかぬり'],['上塗り','うわぬり'],
+  ['防食','ぼうしょく'],['防錆','ぼうせい'],['錆止め','さびどめ'],['腐食','ふしょく'],
+  ['有機溶剤','ゆうきようざい'],['溶剤','ようざい'],['溶解','ようかい'],
+  ['乾燥','かんそう'],['硬化','こうか'],['架橋','かきょう'],
+  ['膜厚','まくあつ'],['膜厚計','まくあつけい'],['光沢','こうたく'],['光沢計','こうたくけい'],
+  ['色相','しきそう'],['明度','めいど'],['彩度','さいど'],['補色','ほしょく'],
+  ['色彩','しきさい'],['配色','はいしょく'],['調色','ちょうしょく'],['原色','げんしょく'],
+  ['顔料','がんりょう'],['樹脂','じゅし'],['粘度','ねんど'],['固形分','こけいぶん'],
+  ['引火点','いんかてん'],['爆発','ばくはつ'],['換気','かんき'],['局所排気','きょくしょはいき'],
+  ['作業主任者','さぎょうしゅにんしゃ'],['安全衛生','あんぜんえいせい'],['保護具','ほごぐ'],
+  ['防毒マスク','ぼうどくますく'],['防じんマスク','ぼうじんますく'],
+  ['高所作業','こうしょさぎょう'],['足場','あしば'],['手すり','てすり'],
+  ['隠蔽力','いんぺいりょく'],['耐候性','たいこうせい'],['耐久性','たいきゅうせい'],
+  ['密着性','みっちゃくせい'],['付着性','ふちゃくせい'],['弾性','だんせい'],
+  ['吹き付け','ふきつけ'],['刷毛','はけ'],['研磨','けんま'],['養生','ようじょう'],
+  ['廃棄物','はいきぶつ'],['産業廃棄物','さんぎょうはいきぶつ'],
+  ['実技試験','じつぎしけん'],['学科試験','がっかしけん'],['受験資格','じゅけんしかく'],
+  ['実務経験','じつむけいけん'],['合格率','ごうかくりつ'],['受験料','じゅけんりょう'],
+  ['色温度','いろおんど'],['演色性','えんしょくせい'],['分光反射率','ぶんこうはんしゃりつ'],
+  ['色見本','いろみほん'],['色票','しきひょう'],['無彩色','むさいしょく'],
+  ['暖色','だんしょく'],['寒色','かんしょく'],['中性色','ちゅうせいしょく'],
+  ['進出色','しんしゅつしょく'],['後退色','こうたいしょく'],
+  ['何','なに'],['場合','ばあい'],['目的','もくてき'],['理由','りゆう'],
+  ['作業','さぎょう'],['材料','ざいりょう'],['方法','ほうほう'],['確認','かくにん'],
+  ['管理','かんり'],['測定','そくてい'],['記録','きろく'],['選定','せんてい'],
+  ['発生','はっせい'],['対策','たいさく'],['影響','えいきょう'],['効果','こうか'],
+];
+
+function addRuby(text){
+  if(!text) return text;
+  let result=text;
+  const sorted=[...RUBY_MAP].sort((a,b)=>b[0].length-a[0].length);
+  sorted.forEach(([kanji,yomi])=>{
+    const re=new RegExp(`(?<!<ruby>)${kanji}(?![^<]*<\\/ruby>)`,'g');
+    result=result.replace(re,`<ruby>${kanji}<rt>${yomi}</rt></ruby>`);
+  });
+  return result;
+}
+
 function renderQuiz(){
   const qs=QUIZ[lang];
   const q=qs[quizIdx];
@@ -1573,21 +1618,21 @@ function renderQuiz(){
   const catLabel = lang==='ja'
     ? `<span class="q-cat">${q.cat}</span><span class="q-lv">${q.lv}</span>`
     : `<span class="q-cat">${q.cat}</span><span class="q-lv">${q.lv}</span>`;
-  const scHtml = q.sc ? `<div class="scenario">${q.sc}</div>` : '';
+  const scHtml = q.sc ? `<div class="scenario">${lang==='ja'?addRuby(q.sc):q.sc}</div>` : '';
   document.getElementById('quiz-body').innerHTML=`
     <div class="quiz-card">
       <div class="q-meta">${catLabel}</div>
       ${scHtml}
-      <div class="q-text">${q.q}</div>
+      <div class="q-text">${lang==='ja'?addRuby(q.q):q.q}</div>
       <div class="choices">
         ${q.cs.map((c,i)=>`
           <button class="choice" onclick="answer(${i})" id="ch-${i}">
             <div class="c-letter">${letters[i]}</div>
-            <span>${c}</span>
+            <span>${lang==='ja'?addRuby(c):c}</span>
           </button>
         `).join('')}
       </div>
-      <div class="explain" id="explain">${q.ex}</div>
+      <div class="explain" id="explain">${lang==='ja'?addRuby(q.ex):q.ex}</div>
       <button class="next-q" id="next-q" onclick="nextQuiz()">${lang==='ja'?'次の問題 →':'Next question →'}</button>
     </div>
   `;
