@@ -518,6 +518,49 @@ html,body{height:100%;background:#0f1521;font-family:Arial,sans-serif;color:#fff
       </div>
       <div id="dict-body" style="padding:8px 16px 16px"></div>
     </div>
+
+    <!-- 資格道場 PAGE -->
+    <div class="page" id="pg-shikaku">
+      <div class="sec-hdr">
+        <span style="font-size:22px">🎓</span>
+        <h2>資格道場</h2>
+      </div>
+
+      <!-- 選択画面 -->
+      <div id="shikaku-select" style="padding:12px 16px;">
+        <div style="background:rgba(232,88,10,0.1);border:1px solid rgba(232,88,10,0.3);border-radius:10px;padding:12px 14px;font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:16px;">
+          💡 各資格の試験傾向に特化した問題集。正答率60%以上で合格ライン達成！
+        </div>
+        <div id="shikaku-list"></div>
+      </div>
+
+      <!-- バトル画面 -->
+      <div id="shikaku-battle" style="display:none;padding:12px 16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div style="font-size:13px;font-weight:700;color:#fff" id="sk-exam-label">試験名</div>
+          <div style="font-family:monospace;font-size:11px;color:rgba(255,255,255,0.5)" id="sk-qnum">Q1/10</div>
+        </div>
+        <div style="text-align:center;font-size:52px;margin:8px 0;" id="sk-icon">🎓</div>
+        <div style="display:flex;justify-content:space-between;background:#1e2d4a;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-family:monospace;font-size:12px;color:rgba(255,255,255,0.7);">
+          <span>❤️ <span id="sk-hp">3</span>/3</span>
+          <span>⭐ <span id="sk-score">0</span>pt</span>
+        </div>
+        <div style="background:#1e2d4a;border-radius:10px;padding:14px;margin-bottom:12px;">
+          <div style="font-size:14px;color:#fff;line-height:1.6;" id="sk-q">問題</div>
+        </div>
+        <div id="sk-choices"></div>
+        <div id="sk-explain" style="display:none;background:rgba(232,88,10,0.1);border:1px solid rgba(232,88,10,0.3);border-radius:8px;padding:12px;font-size:12px;color:rgba(255,255,255,0.8);line-height:1.6;margin-bottom:10px;"></div>
+        <button id="sk-next" onclick="skNext()" style="display:none;width:100%;background:#E8580A;color:#fff;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:80px;">次の問題 →</button>
+      </div>
+
+      <!-- 結果画面 -->
+      <div id="shikaku-result" style="display:none;text-align:center;padding:48px 20px;">
+        <div style="font-size:64px;margin-bottom:12px;" id="sk-result-icon">🎓</div>
+        <div style="font-size:24px;font-weight:700;margin-bottom:12px;" id="sk-result-title">合格！</div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.7);line-height:2;margin-bottom:24px;" id="sk-result-stats"></div>
+        <button onclick="skBackToSelect()" style="background:#E8580A;color:#fff;border:none;border-radius:10px;padding:14px 28px;font-size:14px;font-weight:700;cursor:pointer;">資格選択へ戻る</button>
+      </div>
+    </div>
   </div><!-- /pages -->
 
   <!-- NAV -->
@@ -542,9 +585,9 @@ html,body{height:100%;background:#0f1521;font-family:Arial,sans-serif;color:#fff
       <svg viewBox="0 0 24 24"><path d="M3 17l4-8 4 4 4-6 4 10"/><path d="M3 17h18"/></svg>
       <span data-t="nav-road">資格</span><div class="nav-dot"></div>
     </button>
-    <button class="nav-btn" onclick="goPage('dict')">
-      <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="12" y1="6" x2="16" y2="6"/><line x1="12" y1="10" x2="16" y2="10"/></svg>
-      <span data-t="nav-dict">辞典</span><div class="nav-dot"></div>
+    <button class="nav-btn" onclick="goShikaku()">
+      <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      <span>資格道場</span><div class="nav-dot"></div>
     </button>
   </div>
 
@@ -810,8 +853,316 @@ const QUIZ={
      q:'What is the most likely cause?',
      cs:['Manufacturing defect in the paint lot','Concrete moisture content was too high when painted','Scaffolding removed too early','Recoat interval was too long'],
      ok:1,ex:'Applying low-permeability coatings over concrete with high moisture content (target: ≤8%) traps internal moisture. As it evaporates, it pushes up the film causing blistering. Summer applications with insufficient curing time are particularly at risk.'},
+
+    {cat:'Materials',lv:'Grade 2',sc:'',
+     q:'What is the main purpose of a "primer" in a multi-coat painting system?',
+     cs:['To provide the final color and gloss','To improve adhesion to the substrate and protect against corrosion','To add texture to the surface','To speed up the drying of topcoats'],
+     ok:1,ex:'A primer is the first coat applied to the substrate. Its primary functions are to maximize adhesion of subsequent coats and to provide corrosion protection (on metal) or water resistance (on concrete/wood).'},
+
+    {cat:'Materials',lv:'Grade 1',sc:'',
+     q:'Which paint type offers the best long-term weather resistance for exterior steel structures?',
+     cs:['Alkyd resin paint','Chlorinated rubber paint','Fluoropolymer (fluoro) resin paint','Oil-based paint'],
+     ok:2,ex:'Fluoropolymer paints offer the highest UV and weather resistance among common coating types. They are used on long-life structures such as bridges and high-rise buildings, with expected service life of 15–20+ years.'},
+
+    {cat:'Color Theory',lv:'Grade 2',sc:'',
+     q:'What does "value" (明度) refer to in color theory?',
+     cs:['The intensity or saturation of a color','The lightness or darkness of a color on a scale from black to white','The position of a color on the color wheel','The glossiness of the paint surface'],
+     ok:1,ex:'Value (明度) describes how light or dark a color is. In the Munsell system, 0 = perfect black, 10 = perfect white. High-value colors are lighter; low-value colors are darker. Value is critical in color matching work.'},
+
+    {cat:'Color Theory',lv:'Grade 3',sc:'',
+     q:'What happens when you mix all three primary colors (red, yellow, blue) in equal amounts?',
+     cs:['Bright white','Pure black','A dull grey or brownish-black (near black)','Bright purple'],
+     ok:2,ex:'Mixing all three primary colors theoretically produces black, but in practice creates a dark brown-grey due to pigment impurities. This is called subtractive color mixing and is the basis of all paint color theory.'},
+
+    {cat:'Painting Methods',lv:'Grade 2',sc:'',
+     q:'What is "dry spray" (ドライスプレー) in airless spray painting?',
+     cs:['Spraying without any thinner','Paint that dries before reaching the surface, causing a rough sandy finish','Using compressed air instead of high pressure','Spraying in cold temperatures'],
+     ok:1,ex:'Dry spray occurs when atomized paint particles partially dry before reaching the substrate, resulting in a rough, sandy texture. Causes include excessive distance from the spray gun, high temperatures, or over-thinning.'},
+
+    {cat:'Safety',lv:'Grade 3',sc:'',
+     q:'What type of respiratory protection is required when spray painting with organic solvent-based paints indoors?',
+     cs:['A simple dust mask','An organic vapor respirator (防毒マスク) or supplied-air respirator','No protection needed with good ventilation','A surgical mask'],
+     ok:1,ex:'Organic solvent vapors are toxic and require an organic vapor respirator (防毒マスク) with an appropriate cartridge. In confined spaces, a supplied-air (airline) respirator may be required. Dust masks provide NO protection against vapors.'},
+
+    {cat:'Accident Cases',lv:'Grade 2',sc:'A painter was working at height applying paint from a 3m-high scaffold. He reached out too far and the scaffold board slipped, causing a fall.',
+     q:'Which preventive measure is most appropriate?',
+     cs:['Work faster to reduce time at height','Ensure proper scaffold boarding, use a full-body harness, and never overreach','Use thinner paint so less is needed','Work alone to avoid distractions'],
+     ok:1,ex:'Falls from height are the leading cause of construction fatalities. Prevention requires: secure scaffold boards with sufficient overlap, full-body harness at 2m+, maintaining balance by not overreaching, and a second worker on standby.'},
   ]
 };
+
+// ─────────────────────────────────────────────
+// 資格道場 SHIKAKU DOJO DATA
+// ─────────────────────────────────────────────
+const PAINTER_SHIKAKU = [
+  {
+    id:'painter3', icon:'🖌️', name:'塗装技能士 3級', name_en:'Painting Skills Test Lv.3',
+    color:'#E8580A', desc:'入門資格。実務経験不問で受験可。',
+    questions:[
+      {q:'塗装技能士3級の受験資格は？',cs:['実務経験不問で誰でも受験可能','実務経験1年以上','実務経験3年以上','大学建築学科卒のみ'],ok:0,ex:'3級は実務経験不問。技能実習生・学生でも受験できる入門資格。塗装の基礎知識と技能を証明する。'},
+      {q:'3級実技試験の主な内容は？',cs:['高所での吹き付け塗装','基本的な刷毛・ローラー塗り・素地調整','コンクリート打設','溶接作業'],ok:1,ex:'3級実技は刷毛塗り・ローラー塗り・スプレー塗りの基本操作と素地調整（ケレン作業）が中心。試験時間は約3〜4時間。'},
+      {q:'「素地調整」の目的として最も正しいのは？',cs:['見た目を綺麗にするため','塗料の付着性を高め塗膜の耐久性を確保するため','作業時間を短縮するため','塗料のコストを下げるため'],ok:1,ex:'素地調整は塗料の密着性を最大化し、塗膜の剥離・腐食を防ぐための最重要工程。素地調整の良し悪しが塗装品質の8割を決めると言われる。'},
+      {q:'「ケレン2種」の内容として正しいのは？',cs:['ブラストによる完全除去','さびを手工具・動力工具で除去し、塗膜の密着を妨げる部分を取り除く','高圧洗浄のみ','旧塗膜を全て剥がす'],ok:1,ex:'ケレン2種は手工具・動力工具（グラインダー・ワイヤーブラシ等）でさびや旧塗膜の不良部分を除去。橋・鉄骨の改修工事でよく使われる。'},
+      {q:'塗装の「乾燥時間」に影響を与える最大の要因は？',cs:['塗料の色','気温・湿度・風','塗装面の色','作業員の人数'],ok:1,ex:'乾燥時間は気温・湿度・風速の影響を大きく受ける。低温・高湿では乾燥が遅延。5℃以下・湿度85%以上では塗装を避けることが一般的。'},
+      {q:'「はけ塗り」の基本として正しいのは？',cs:['毎回同じ方向にのみ塗る','最初は縦横に塗り広げ、最後に一定方向に仕上げ塗りをする','できるだけ厚く一度に塗る','刷毛は常に垂直に持つ'],ok:1,ex:'刷毛塗りは最初に縦横に塗り広げてムラなく行き渡らせ、最後に一定方向で仕上げる。過剰な塗りつけは「タレ」の原因になる。'},
+      {q:'有機溶剤を使用する塗装作業の安全管理で正しいのは？',cs:['換気は任意で良い','作業前に局所排気装置を確認し防毒マスクを着用する','一般の使い捨てマスクで十分','1人での密閉空間作業は問題ない'],ok:1,ex:'有機溶剤中毒予防規則により、有機溶剤取り扱い時は局所排気装置の設置・防毒マスク着用・作業主任者の選任が義務。密閉空間では監視者も必要。'},
+      {q:'塗料の「希釈」について正しいのは？',cs:['どんな塗料にも同じシンナーが使える','塗料の種類に適合したシンナーを使い、指定の希釈率を守る','多く希釈するほど塗膜が強くなる','希釈は塗料性能に影響しない'],ok:1,ex:'シンナーの種類を間違えると塗料が変質する。希釈率は塗料メーカーの指定を守ること。過剰希釈は塗膜強度の低下・タレ・ムラの原因。'},
+      {q:'塗料の保管で正しいのは？',cs:['高温の場所に置く','火気から離れた冷暗所に保管し、缶は密閉する','逆さにして保管する','水と一緒に保管する'],ok:1,ex:'塗料（特に溶剤系）は引火性・揮発性が高い。直射日光・高温・火気を避けた冷暗所に保管。缶を密閉し転倒防止措置をとること。'},
+      {q:'「塗り重ね間隔」を守らないとどうなるか？',cs:['乾燥が早まり品質が上がる','下層塗膜との密着不良・リフティング・溶解が起きる','特に問題はない','次の塗りが難しくなるだけ'],ok:1,ex:'塗り重ね間隔が短すぎると下層塗膜が溶けてシワ（リフティング）が発生。長すぎると層間密着が低下して剥離の原因になる。塗料ごとの規定時間を守ることが必須。'},
+    ]
+  },
+  {
+    id:'painter2', icon:'🎨', name:'塗装技能士 2級', name_en:'Painting Skills Test Lv.2',
+    color:'#3A7BD5', desc:'実務経験2年以上。塗装職人の基本資格。',
+    questions:[
+      {q:'2級実技試験でよく出る「吹き付け塗装」の正しい手順は？',cs:['希釈→スプレーガン調整→試し吹き→本塗装','本塗装→希釈→調整','試し吹き→希釈→調整→本塗装','調整なしで直接本塗装'],ok:0,ex:'吹き付け塗装は①希釈（適正粘度）②スプレーガン調整（パターン・霧化・流量）③試し吹き確認④本塗装の順が基本。試し吹きで塗膜状態を確認することが重要。'},
+      {q:'「塗膜の膨れ（ブリスタリング）」の主な原因は？',cs:['塗料の量が少ない','素地の水分・溶剤が塗膜内に閉じ込められる','気温が高い','塗料の色が濃い'],ok:1,ex:'ブリスタリングは素地の水分、または塗膜内に閉じ込められた溶剤が熱で蒸発し、塗膜を押し上げる現象。素地の十分な乾燥と適正な塗り重ね間隔が予防の基本。'},
+      {q:'「エアスプレー」と「エアレス（高圧）スプレー」の違いで正しいのは？',cs:['エアレスの方が仕上がりが美しい','エアレスは塗料に直接高圧をかけ霧化するため厚膜塗装が可能','エアスプレーは防食用に最適','どちらも同じ原理'],ok:1,ex:'エアレス（高圧）スプレーは塗料に直接高圧（10〜20MPa）をかけてノズルから霧化。高粘度・厚膜塗装に適する。エアスプレーは圧縮空気で霧化するため仕上がりが美しいが薄膜向け。'},
+      {q:'鉄部塗装の3工程（下塗り・中塗り・上塗り）の目的として正しいのは？',cs:['下塗りのみで防食できる','下塗り=防食・密着、中塗り=膜厚確保・凹凸補正、上塗り=耐候性・仕上げ・色'],ok:1,ex:'鉄部の塗装システムは各層に役割がある。下塗り（プライマー）：防食・密着性、中塗り：膜厚と平滑性、上塗り：耐候性・美観。3層の組み合わせで長期防食を実現。'},
+      {q:'「チョーキング（白亜化）」とは何か？',cs:['塗膜表面が白く粉状になる劣化現象','塗料が缶の中で固まること','チョークで線を引くこと','塗膜が透明になること'],ok:0,ex:'チョーキング（白亜化）は紫外線・風雨で塗膜が劣化し、表面が白く粉状になる現象。指でこすると白い粉が付く。外装塗膜の塗替え時期の判断基準のひとつ。'},
+      {q:'塗装技能士2級の実技試験時間はおよそどのくらいか？',cs:['1時間','3時間','5〜6時間','10時間'],ok:2,ex:'2級実技試験は約5〜6時間。素地調整・下塗り・上塗りを含む一連の塗装作業を審査される。作業の正確さとともに時間管理も評価される。'},
+      {q:'「塗り替え塗装」で旧塗膜の状態を確認する方法は？',cs:['目視のみで十分','碁盤目試験（クロスカット法）や鉛筆硬度試験などで密着性・硬度を確認','叩いて音で確認','重さで確認'],ok:1,ex:'碁盤目試験は1mm間隔の切れ目を入れテープで密着を確認する方法。旧塗膜の密着不良があれば全剥離が必要。水膨れ・ひび割れ・錆も目視確認する。'},
+      {q:'「塗料の粘度」の測定に使う標準的な工具は？',cs:['温度計','フォードカップ（粘度カップ）','計量カップ','圧力計'],ok:1,ex:'フォードカップはカップ底の小穴から塗料が流出する時間（秒）で粘度を測定する工具。塗装作業前の粘度管理に使用。スプレー塗装では適正粘度管理が品質の鍵。'},
+      {q:'「乾燥膜厚」と「ウェット膜厚」の関係は？',cs:['同じである','ウェット膜厚×固形分体積比率=乾燥膜厚（ウェット>乾燥）','乾燥膜厚>ウェット膜厚','希釈率によって変わらない'],ok:1,ex:'乾燥膜厚＝ウェット膜厚×固形分体積比率。例：ウェット100μm、固形分60%なら乾燥膜厚は60μm。設計膜厚を確保するには固形分体積比率を考慮した塗布量管理が必要。'},
+      {q:'「色合わせ（調色）」作業での注意点として正しいのは？',cs:['いきなり多量の顔料を加える','少量ずつ顔料を加え、十分に攪拌後に乾燥サンプルで色確認する','一度で大量に作る','色は濡れた状態で確認する'],ok:1,ex:'調色は少量ずつ顔料・着色材を加え、十分に攪拌して均一にしてから乾燥サンプルで色確認する。濡れた状態と乾燥後では色が変わるため、必ず乾燥後に色見本と比較する。'},
+    ]
+  },
+  {
+    id:'painter1', icon:'⭐', name:'塗装技能士 1級', name_en:'Painting Skills Test Lv.1',
+    color:'#F6D860', desc:'最上位資格。高度な技能と知識が必要。',
+    questions:[
+      {q:'1級実技試験で求められる「スプレー塗装」のレベルは？',cs:['3級と同じ基本作業','複雑な形状・難素材への均一塗装、厚膜管理、特殊仕上げへの対応','水性塗料のみ','刷毛塗りのみ'],ok:1,ex:'1級は複雑な形状・難素材（亜鉛メッキ鋼等）への均一塗装、精密な膜厚管理、特殊仕上げ（模様・多彩色等）への対応が求められる。'},
+      {q:'「フッ素樹脂塗料」が高コストでも採用される主な理由は？',cs:['価格が安い','耐候性・耐汚染性が最高クラスで超長期間の塗り替えが不要','乾燥が最速','薄膜でも十分な防食ができる'],ok:1,ex:'フッ素樹脂塗料はC-F結合の安定性により紫外線・酸性雨・汚れに最強クラスの抵抗力を示す。初期コストは高いが塗り替えサイクルが15〜20年以上と長く、ライフサイクルコストで有利。'},
+      {q:'「無機系塗料（無機塗料）」の主な特徴は？',cs:['有機溶剤が主成分','ケイ素（シリカ）などの無機成分で超高耐候性・不燃性・防汚性を発揮','水性塗料より安価','乾燥が極めて遅い'],ok:1,ex:'無機系塗料はシリコンやシリカを主成分とし、有機成分がほぼないため紫外線で劣化せず超高耐候性・不燃性・防汚性を発揮。高層ビル・橋梁に採用される。'},
+      {q:'「膜厚管理」で使う「ウェット膜厚計（ウェットフィルムゲージ）」の使い方は？',cs:['乾燥後に使う','塗装直後のウェット状態で塗膜に垂直に押しつけて膜厚を読む','温度を測る道具','表面の硬さを測る'],ok:1,ex:'ウェット膜厚計は塗装直後に塗膜に押しつけ、塗料が付着する最大の歯の高さでウェット膜厚を測定する。乾燥膜厚を確保するための施工中の管理に使う。'},
+      {q:'「JIS K 5600」は何を規定した規格か？',cs:['塗料の色番号','塗料一般試験方法（塗膜性能の試験方法）','塗装工の資格基準','塗料の保管方法'],ok:1,ex:'JIS K 5600は塗料一般試験方法を規定した規格。密着性・硬度・耐水性・耐候性などの塗膜性能試験方法が定められている。塗装仕様書・品質管理の基礎となる規格。'},
+      {q:'「塗装仕様書（スペック）」に記載される主な内容は？',cs:['作業員の個人情報','塗装系統・使用塗料・塗布量・乾燥膜厚・塗り回数・素地調整グレード等'],ok:1,ex:'塗装仕様書は工事の塗装に関するすべての技術要件を規定した文書。塗装系統・塗料銘柄・希釈率・塗布量・膜厚・塗り回数・乾燥条件・素地調整グレードを記載。'},
+      {q:'「アルキド樹脂塗料」の特徴として正しいのは？',cs:['耐候性が最高クラス','乾性油と多塩基酸の反応で作られ、コスト低く密着性が良いが耐候性は中程度','水性のみ','防食性が最高'],ok:1,ex:'アルキド樹脂（合成樹脂調合ペイント）は乾性油由来の塗料で密着性・コストに優れる。ただし耐候性はアクリル・ウレタン・フッ素より劣る。一般建物の室内・鉄部に使われる。'},
+      {q:'「異種金属接触腐食（ガルバニック腐食）」の対策は？',cs:['塗装は不要','接触部を絶縁材で遮断し、防食塗装を施す','同じ塗料で塗るだけで防げる','温度管理のみ'],ok:1,ex:'異種金属（鉄とアルミ等）が接触し電解質（水）があると電流が流れ卑金属側が腐食する。対策は絶縁材挿入＋防食塗装。塗装だけでは不十分なため構造的対策が必要。'},
+      {q:'「塗膜の内部応力（残留応力）」が高いとどうなるか？',cs:['塗膜が柔軟になる','塗膜のひび割れ・剥離が起きやすくなる','乾燥が早くなる','色が鮮やかになる'],ok:1,ex:'内部応力は塗膜の硬化・収縮・温度変化で生じる。応力が高いと塗膜にひびが入り（クラッキング）、剥離につながる。厚塗りや急激乾燥は応力を高める原因。'},
+      {q:'「鉛系錆止め塗料」の使用を避ける理由は？',cs:['防食性能が低い','鉛は有害物質で環境・健康への悪影響があり、法規制が強化されている','コストが高い','乾燥が遅い'],ok:1,ex:'鉛系錆止め（鉛丹・亜酸化鉛等）は優れた防食性能を持つが、鉛は有害金属で RoHS・塗料規制・廃棄物規制の対象。現在は亜鉛系・ジンクリッチ系などの無鉛錆止めへの移行が進んでいる。'},
+    ]
+  },
+  {
+    id:'safety_painter', icon:'⛑️', name:'有機溶剤・安全衛生', name_en:'Solvent & Safety',
+    color:'#1A7A4A', desc:'有機溶剤取扱・高所作業・安全法規。',
+    questions:[
+      {q:'有機溶剤作業主任者が必要になる作業場所は？',cs:['屋外の広い場所での水性塗装','タンク・船倉など密閉された場所での有機溶剤使用作業','屋上での塗装作業','粉体塗装の作業'],ok:1,ex:'有機溶剤作業主任者は有機溶剤中毒予防規則により、第1種・第2種有機溶剤を使用する屋内作業場・タンク内部等に選任義務がある。'},
+      {q:'有機溶剤の「許容濃度（TLV）」とは何か？',cs:['爆発が始まる濃度','健康障害が起きる確率が低い最大の作業環境濃度（ppm/mg/m³）','引火点','蒸発速度'],ok:1,ex:'許容濃度（TLV: Threshold Limit Value）は労働者が毎日8時間・週40時間暴露しても健康障害が生じない最大濃度。作業環境測定でこれを下回るよう管理する。'},
+      {q:'「送気マスク（エアラインマスク）」が必要になる場面は？',cs:['屋外での通常塗装','密閉タンク内や酸欠危険場所での塗装作業','粉じん作業','軽作業全般'],ok:1,ex:'送気マスクは清浄な空気を外部から供給するマスク。防毒マスクでは対応困難な高濃度有機溶剤・酸素欠乏危険場所での必須装備。自給式と電動ファン式がある。'},
+      {q:'「爆発下限界（LEL）」の説明として正しいのは？',cs:['溶剤が引火する最低温度','溶剤蒸気が爆発する最低濃度（これ以下では爆発しない）','溶剤の最大使用量','蒸発が始まる温度'],ok:1,ex:'爆発下限界（LEL）は可燃性ガスが爆発・燃焼を起こす最低濃度。塗装作業場は爆発下限界の25%以下（1/4LEL以下）に換気を維持することが安全目標。'},
+      {q:'高所作業（2m以上）での「フルハーネス型安全帯」の規定は？',cs:['任意着用','2022年1月から原則フルハーネス型が義務化（胴ベルト型からの移行）','5m以上のみ必要','外部工事のみ必要'],ok:1,ex:'2022年1月から高所作業でのフルハーネス型安全帯が原則義務化。従来の胴ベルト型は内臓圧迫リスクがあり廃止方向。6.75m超（建設業では5m超）はフルハーネスが必須。'},
+      {q:'「酸素欠乏危険作業」に関して正しいのは？',cs:['酸素濃度18%以上あれば問題ない','作業前に酸素濃度・有害ガス濃度を測定し、監視者を配置する義務がある','一人で作業して良い','感覚で判断できる'],ok:1,ex:'酸素欠乏危険場所（タンク・マンホール等）では作業前に酸素濃度（18%以上）と硫化水素濃度（10ppm以下）を測定。酸欠作業主任者の選任と監視者配置が義務。'},
+      {q:'「塗料の引火点（flash point）」の重要性は？',cs:['作業温度の設定に使う','引火点以上の温度で可燃性蒸気が発生するため、保管・作業時の火気管理の基準になる','塗料の乾燥速度の指標','色の安定性の指標'],ok:1,ex:'引火点は可燃性蒸気が空気と混合して点火できる最低温度。引火点が低い溶剤系塗料ほど火災リスクが高い。作業場の電気設備防爆対策・禁煙・静電気対策の基準となる。'},
+      {q:'塗装現場での「特定化学物質障害予防規則」の対象として正しいのは？',cs:['全ての塗料','クロム化合物・鉛・イソシアネート等の特定化学物質を含む塗料','水性塗料のみ','シンナーのみ'],ok:1,ex:'特定化学物質（クロム・鉛・イソシアネート・ベンゼン等）を含む塗料・薬品の取り扱いには特化則が適用される。作業主任者選任・特殊健康診断・保護具着用が義務。'},
+      {q:'「廃塗料・廃シンナー」の処分で法律上正しいのは？',cs:['下水道に流してよい','産業廃棄物として許可業者に委託して処理する','焼却すれば問題ない','埋め立てて良い'],ok:1,ex:'廃塗料・廃シンナーは廃棄物処理法上の産業廃棄物（特別管理産業廃棄物）。無許可業者への委託・不法投棄・下水への排出は法律違反。許可を受けた廃棄物処理業者に委託する。'},
+      {q:'「労働安全衛生法」で毎年実施が義務付けられる健康診断は？',cs:['任意の健康診断','雇い入れ時と年1回以上の定期健康診断','5年に1回','引退まで不要'],ok:1,ex:'労働安全衛生法により、事業者は労働者を雇い入れた時と毎年1回以上の定期健康診断を実施する義務がある。有害業務（有機溶剤等）従事者は特殊健康診断も追加で必要。'},
+    ]
+  },
+  {
+    id:'color_theory', icon:'🎭', name:'色彩検定 対策', name_en:'Color Theory Exam Prep',
+    color:'#9B59B6', desc:'色彩理論・マンセル・配色の基礎。',
+    questions:[
+      {q:'色の三属性（色相・明度・彩度）のうち「彩度」とは何か？',cs:['色の明るさ','色の鮮やかさ・純粋さ','色の種類（赤・青等）','色の透明度'],ok:1,ex:'彩度（Chroma）は色の鮮やかさ・純度を表す属性。彩度が高いほど鮮やか（純色に近い）、低いほどくすんだ色（無彩色に近い）。'},
+      {q:'マンセル表色系で「5R 4/14」の読み方として正しいのは？',cs:['色相5R・明度4・彩度14','色相R・明度5・彩度414','彩度5・色相R・明度14','明度4・彩度R・色相514'],ok:0,ex:'マンセル表記はH V/C（色相 明度/彩度）。5R 4/14は色相5R（赤）・明度4・彩度14の高彩度赤色。塗料の色指定・色合わせで必須の表記法。'},
+      {q:'「色の三原色（減法混色）」として正しいのは？',cs:['赤・緑・青（RGB）','シアン・マゼンタ・イエロー（CMY）','赤・黄・青（RYB）','白・黒・グレー'],ok:2,ex:'絵の具・塗料の減法混色の三原色は赤（Red）・黄（Yellow）・青（Blue）。混ぜるほど暗くなる。光の三原色（加法混色）はRGB（赤・緑・青）で別物。'},
+      {q:'「暖色」「寒色」「中性色」の分類で「緑」はどれか？',cs:['暖色','寒色','中性色','無彩色'],ok:2,ex:'緑・紫は暖色でも寒色でもない「中性色」。赤・橙・黄が暖色（進出色）、青・青緑・青紫が寒色（後退色）。色温度感覚は塗装の色選定・調色に応用される。'},
+      {q:'「同時対比」とはどのような現象か？',cs:['同じ色を同時に塗ること','隣接する色の影響で色の見え方が変化する現象','複数の光源で照らすこと','色が経時変化する現象'],ok:1,ex:'同時対比は隣接する色の影響で明度・彩度・色相が異なって見える現象。例：灰色も黒背景では明るく、白背景では暗く見える。配色計画や色合わせ確認で考慮が必要。'},
+      {q:'「JIS安全色彩」で赤色が示す意味は？',cs:['注意・警告','禁止・危険・消防','指示・情報','安全・救護'],ok:1,ex:'JIS安全色彩：赤＝禁止・危険・消防（消火器・禁止標識等）、黄＝注意・警告（危険箇所・注意標識）、緑＝安全・救護（避難口・救急）、青＝指示・情報。'},
+      {q:'「色の進出・後退効果」で「進出して見える色」はどれか？',cs:['青・青緑などの寒色系','赤・橙・黄などの暖色系・高彩度色','黒・グレー','白のみ'],ok:1,ex:'暖色系（赤・橙・黄）と高彩度色は実際より手前に見える「進出色」。寒色系（青・青緑）は奥に引っ込んで見える「後退色」。建築の空間設計・標識の視認性設計に応用される。'},
+      {q:'「メタメリズム（条件等色）」が塗装の色合わせで問題になる理由は？',cs:['特に問題ない','同じ色見本でも光源が変わると色が違って見え、顧客とのトラブルになる','コストが高くなる','乾燥が遅くなる'],ok:1,ex:'メタメリズムは異なる分光特性の色が特定光源下だけ同じに見える現象。自然光・蛍光灯・LED下では見え方が異なる。色合わせは複数の光源（D65/A/F等）で確認する必要がある。'},
+      {q:'「PCCS（日本色研）」の色調（トーン）で「ビビッドトーン」の特徴は？',cs:['くすんだ低彩度','最も鮮やかで高彩度の純色に近いトーン','暗く濃いトーン','明るく淡いトーン'],ok:1,ex:'PCCSのビビッドトーン（v）は最高彩度のトーンで純色に最も近い。色の鮮やかさを最大限表現する。塗料の色標準・インテリアカラー設計の基準として使われる。'},
+      {q:'「配色の調和」で「類似色配色」とは何か？',cs:['反対色を使う配色','色相環で隣接する似た色同士の配色','補色を使う配色','無彩色だけの配色'],ok:1,ex:'類似色配色は色相環で隣り合う（類似する）色同士の配色。統一感・まとまりが生まれ、落ち着いた上品な印象になる。補色配色（対比色）とは反対のアプローチ。'},
+      {q:'「色相環」で隣り合う色を「類似色」、正反対の色を何というか？',cs:['同一色','対比色・補色','無彩色','中間色'],ok:1,ex:'色相環で正反対に位置する色を補色（対比色）という。補色の組み合わせは強い対比を生み、視認性が高まる。交通標識・工事現場の警戒色に活用される。'},
+      {q:'「純色（じゅんしょく）」とは何か？',cs:['白・黒・グレーの無彩色','各色相で最も彩度が高い色','最も明度が高い色','工業用塗料の標準色'],ok:1,ex:'純色は各色相において彩度が最も高い鮮やかな色。絵の具の原色に相当する。純色に白を混ぜると「淡い色（tint）」、黒を混ぜると「暗い色（shade）」になる。'},
+      {q:'「分光反射率曲線」とは何か？',cs:['塗料の乾燥速度のグラフ','各波長の光をどれだけ反射するかを示すグラフ（色の指紋）','塗膜の強度グラフ','価格変動のグラフ'],ok:1,ex:'分光反射率曲線は色が各波長（380〜780nm）の光をどの割合で反射するかを示すグラフ。同じ色に見えても分光特性が異なる（メタメリズムの原因）。精密な色管理に使う。'},
+      {q:'マンセル表色系で「無彩色」の彩度は？',cs:['彩度10','彩度5','彩度1','彩度0'],ok:3,ex:'無彩色（白・グレー・黒）は彩度が0。有彩色は彩度が1以上。彩度0の軸をマンセル中心軸といい、明度0（黒）〜10（白）を表す。'},
+      {q:'「膨張色」と「収縮色」の説明で正しいのは？',cs:['暗色が膨張色で明色が収縮色','明るい色・暖色が膨張色、暗い色・寒色が収縮色','色に関係なく形状だけで決まる','補色が膨張色'],ok:1,ex:'明るい色（高明度）や暖色は実際より大きく見える「膨張色」。暗い色・寒色は小さく見える「収縮色」。塗装の色選定では空間の広さ・狭さの印象に影響する。'},
+      {q:'「色温度（ケルビン値K）」で昼白色蛍光灯はおよそ何Kか？',cs:['2700K','4000〜5000K','6500K以上','1000K以下'],ok:1,ex:'昼白色は約4000〜5000K。電球色は2700〜3000K（暖かいオレンジ）、昼光色は6500K以上（青白い）。光源の色温度は塗料の色の見え方（メタメリズム）に大きく影響する。'},
+      {q:'「トーン（tone）」とは色彩学で何を表すか？',cs:['音楽の音色','明度と彩度を組み合わせた色の調子（印象）','色相の別名','塗料の粘度'],ok:1,ex:'トーンは明度と彩度を合わせた「色の調子」。ビビッド・ペール・ダーク・グレイッシュなど12〜24種類に分類される。PCCSや日本工業規格で色表示に使われる。'},
+      {q:'「色の面積効果」とは何か？',cs:['大きい面積に塗ると色が変わる現象','面積が大きくなると明度・彩度が高く見える効果','色が面積によって消える現象','面積が色の価格を決める要因'],ok:1,ex:'色の面積効果は面積が大きいほど同じ色でも明るく・鮮やかに見える現象。色見本（小面積）より実際の壁面（大面積）では色が強く見える。塗料選定では1〜2トーン暗めを選ぶことが多い。'},
+      {q:'「配色の分類」で「ドミナントカラー配色」とは？',cs:['補色を主役にした配色','全体を同一または類似した色相でまとめた統一感のある配色','無彩色のみの配色','3色以上を均等に使う配色'],ok:1,ex:'ドミナントカラー配色は主役となる色（ドミナント＝支配的）を統一させる配色法。建物の外装・工場設備の色彩計画などで統一感を出すのに使われる。'},
+    ]
+  },
+];
+
+// ─────────────────────────────────────────────
+// SHIKAKU EXTRA QUESTIONS (追加10問 × 5科目)
+// ─────────────────────────────────────────────
+const SHIKAKU_EXTRA = {
+  painter3:[
+    {q:'ローラー塗りで「W字塗り」をする理由は？',cs:['早く塗れるから','塗料を均一に広げムラをなくすため','縦方向だけで十分だから','塗料の節約のため'],ok:1,ex:'ローラー塗りはまずW字・M字に塗り広げ、塗料を均一に分配してからローラーを縦横に均す。一方向だけでは塗りムラが生じやすい。'},
+    {q:'「下塗り」の目的として最も適切なのは？',cs:['仕上がりの色を決める','素地との密着性向上と防錆・防食効果を発揮する','塗装を早く終わらせる','コストを下げる'],ok:1,ex:'下塗り（プライマー・錆止め）は素地との密着を最大化し、腐食・劣化から保護する第一層。この層の品質が塗装全体の耐久性を左右する。'},
+    {q:'吹き付け塗装で「スプレーガンの距離」の適正値はおよそ何cmか？',cs:['5〜10cm','20〜30cm','50〜60cm','100cm以上'],ok:1,ex:'エアスプレーのガンと被塗物の距離は一般に20〜30cm。近すぎるとタレ・ちりめん、遠すぎるとドライスプレー・膜厚不足が発生する。'},
+    {q:'「養生（ようじょう）」とは塗装作業で何をすることか？',cs:['作業員の健康管理','塗装しない部分をマスキングテープ・シートで保護すること','塗料を保管すること','道具を洗浄すること'],ok:1,ex:'養生は塗装しない窓・床・設備などをテープ・シート・ビニールで保護する作業。養生の丁寧さが仕上がりの品質と後片付けの効率を大きく左右する。'},
+    {q:'塗装作業後の「後片付け」で正しいのは？',cs:['使った塗料は下水に流す','刷毛・ローラーを適切な溶剤で洗い、廃液は産業廃棄物として処理する','道具はそのまま放置する','残塗料は屋外に捨てる'],ok:1,ex:'使用後の刷毛・ローラーは適切な溶剤（水性なら水、溶剤系なら専用シンナー）で洗浄。廃液・廃塗料は産業廃棄物として許可業者に処理を委託する。'},
+    {q:'「塗装面積の計算」で外壁の窓・ドアは通常どう扱うか？',cs:['全面積から全て引く','小開口（1㎡以下）は控除なし、大開口は協議','すべて2倍にする','計算に含めない'],ok:1,ex:'外壁塗装の面積計算では、1㎡以下の小開口は控除せず塗装面積に含める（ガラス面・枠回りの養生手間が生じるため）。1㎡超の大開口は実面積から控除する。'},
+    {q:'「水性塗料」と「溶剤系塗料」の乾燥の仕組みの違いは？',cs:['水性は紫外線で乾燥する','水性は水の蒸発で乾燥、溶剤系は溶剤の蒸発＋架橋反応で乾燥','同じ仕組み','溶剤系の方が水性より遅い'],ok:1,ex:'水性塗料は水の蒸発による乾燥。溶剤系塗料は溶剤の蒸発と樹脂の化学反応（架橋）で硬化。二液型は主剤と硬化剤の反応が加わりより強固な塗膜になる。'},
+    {q:'「塗装技能士」試験の「実技試験」で採点される主な項目は？',cs:['作業時間のみ','塗膜の均一性・膜厚・素地調整品質・仕上がりの総合評価','使用する道具の種類','材料の量'],ok:1,ex:'実技試験は塗膜の均一性・膜厚・素地調整の品質・仕上がりの美しさが採点される。安全な作業態度・整理整頓・後片付けも評価対象に含まれる。'},
+    {q:'「防錆塗料（さびどめ）」の種類で「ジンクリッチプライマー」の特長は？',cs:['速乾性が最も高い','亜鉛（zinc）の犠牲防食作用で鉄を強力に保護する','最も安価な錆止め','軽量素材にのみ使える'],ok:1,ex:'ジンクリッチプライマーは多量の亜鉛末を含み、亜鉛がイオン化することで鉄を優先的に保護する「犠牲防食」効果を発揮。橋梁・鉄骨の高耐食防食に使われる最強クラスの錆止め。'},
+    {q:'「乾式（ドライ）ケレン」と「湿式（ウェット）ケレン」の違いは？',cs:['同じ作業','乾式は砥石・工具で乾いた状態で行い、湿式は水を使いながら行うケレン','乾式の方が常に優れる','湿式は屋外のみ'],ok:1,ex:'乾式ケレンはグラインダー・ワイヤーブラシなど。湿式ケレンは高圧水洗を使い粉じんを抑制。湿式は粉じん対策・環境規制が厳しい現場（鉛含有旧塗膜の除去等）で採用される。'},
+  ],
+  painter2:[
+    {q:'「塗り継ぎ部」の処理で正しいのは？',cs:['塗り継ぎは目立っても良い','既存塗膜との段差をペーパーで研磨し段差をなくしてから塗り重ねる','塗り継ぎは補修不要','厚塗りで段差を埋める'],ok:1,ex:'塗り継ぎ部は既存塗膜との境界に段差が生じる。ペーパーサンドで段差を研磨してフェザーエッジ（羽根状に薄くなる形状）を作り、段差を目立たなくしてから塗り重ねる。'},
+    {q:'「インターバル（塗り重ね間隔）」の管理で最も重要なのは？',cs:['できるだけ短くする','メーカー指定の最短・最長間隔を守り、下層の乾燥状態を確認する','気温に関わらず一定にする','時間よりも見た目で判断する'],ok:1,ex:'塗り重ね間隔はメーカーが指定する最短（十分な乾燥前に塗ると溶解・リフティング）と最長（長すぎると層間密着低下）の範囲内で管理。気温・湿度によって変わるため現場での確認が必須。'},
+    {q:'「ブリード（にじみ）」とは何か？',cs:['塗料が缶から溢れること','下層の着色成分が上塗り塗膜に移行して変色する現象','塗料が水に溶ける現象','塗膜が滑らかになること'],ok:1,ex:'ブリードは旧塗膜や下塗りの着色成分（ビチューメン・アスファルト等）が上塗り塗膜に移行し変色する現象。ブリード防止プライマーやシェラック系シーラーで対策する。'},
+    {q:'「隠蔽力（いんぺいりょく）」が高い塗料の特性は？',cs:['乾燥が速い','少ない塗布量で下地の色・模様を隠せる','臭いが少ない','価格が安い'],ok:1,ex:'隠蔽力は下地の色や模様を塗りつぶす能力。隠蔽力が高い塗料は1〜2回塗りで均一な仕上がりが得られる。チタン白（酸化チタン）は隠蔽力が最も高い白色顔料。'},
+    {q:'「エナメル塗料」の特徴は？',cs:['ツヤなし仕上げ専用','樹脂（ワニス）に顔料を分散させた塗料で光沢仕上げに使われる','水性塗料の別名','下塗り専用塗料'],ok:1,ex:'エナメル塗料は顔料を樹脂ワニスに分散させた有色塗料。光沢（グロス）仕上げが特徴で、金属・木部の仕上げ塗りに広く使われる。ラッカーエナメル・フタル酸エナメル等がある。'},
+    {q:'「塗料の貯蔵安定性（シェルフライフ）」とは？',cs:['塗料の乾燥後の安定性','適切な条件で保管した場合に塗料性能が維持される期間','塗膜の耐久年数','施工後の品質保証期間'],ok:1,ex:'シェルフライフ（貯蔵安定性）は塗料を適切な条件（温度・密閉等）で保管した際に品質が保持される期間。期限を過ぎるとゲル化・分離・変質が起きる場合がある。'},
+    {q:'「上塗り塗料の選定」で最も重要な基準は？',cs:['価格','使用環境（屋外/屋内・腐食性・紫外線等）と要求性能（耐候性・耐薬品性等）に合わせた選定','色の好み','製造メーカー'],ok:1,ex:'上塗り塗料は使用環境（屋外・海岸・工場等）と要求性能（耐候性・耐薬品性・防汚性等）を考慮して選定する。下塗りとの相性（塗料系統の互換性）も必ず確認する。'},
+    {q:'「塗膜の光沢（グロス）」の測定に使う機器は？',cs:['温度計','光沢計（グロスメーター）','膜厚計','粘度計'],ok:1,ex:'光沢計（グロスメーター）は一定角度（20°・60°・85°）で光を当て反射光量を測定する機器。Gs60°（60度鏡面光沢）が最も一般的な測定値。仕上がり品質の確認に使う。'},
+    {q:'「弾性塗料」の主な用途は？',cs:['金属への防食塗装','コンクリート・モルタル外壁のひび割れ追従・防水塗装','木部の仕上げ塗装','屋根の断熱塗装'],ok:1,ex:'弾性塗料はゴム弾性を持つ塗膜で、コンクリート・モルタルの微細なひび割れ（ヘアクラック）に追従し防水性を確保。外壁・橋梁・駐車場床などに使われる。'},
+    {q:'「2液形塗料の硬化剤比率」を守らないとどうなるか？',cs:['特に影響なし','塗膜の硬化不良・密着不良・耐性低下が起きる','乾燥が早くなるだけ','色が変わるだけ'],ok:1,ex:'2液塗料の主剤・硬化剤の混合比率はメーカー指定を厳守。過不足があると架橋反応が不完全になり、硬化不良・密着不良・耐薬品性・耐候性の大幅低下を引き起こす。'},
+  ],
+  painter1:[
+    {q:'「ハイビルド塗料（厚膜型）」の主な特徴は？',cs:['薄膜で速乾','1回の塗布で高膜厚が得られ、工程数削減と防食性向上が同時にできる','価格が最も安い','屋内専用'],ok:1,ex:'ハイビルド（厚膜型）塗料は高粘度・高固形分で1回塗りで大きな乾燥膜厚が得られる。重防食・橋梁・タンクなどで使われ、工期短縮と高耐久を同時に実現する。'},
+    {q:'「ジンクリッチペイント（有機系・無機系）」の違いは？',cs:['色が違う','有機系はエポキシ樹脂バインダー、無機系はシリケートバインダーで無機系の方が耐熱性が高い','価格差のみ','用途は同じ'],ok:1,ex:'ジンクリッチペイントの有機系（エポキシバインダー）は施工性に優れ汎用性が高い。無機系（シリケートバインダー）は耐熱性・耐火性が高く高温環境（プラント・タンク）に使われる。'},
+    {q:'「ISO 8501-1」とは何を定めた規格か？',cs:['塗料の品質基準','鋼材の錆・素地のグレード（Sa1〜Sa3・St2〜St3）を定めた素地調整の国際規格','塗装工の資格基準','色見本の規格'],ok:1,ex:'ISO 8501-1は鋼材表面の素地状態をSa（ブラスト処理）とSt（手工具・動力工具）のグレードで定めた国際規格。防食塗装仕様書の素地調整基準として世界で使われる。'},
+    {q:'「防汚塗料（antifouling）」の主な用途は？',cs:['空気汚染防止','船底・水中構造物に付着する貝類・藻類を防ぐ塗料','外壁の汚れを防ぐ塗料','道路のすべり止め'],ok:1,ex:'防汚塗料は船底・杭・漁網などに使われ、海洋生物（フジツボ・藻）の付着を防ぐ。毒性規制（有機スズ禁止等）により現在は自己研磨型・加水分解型が主流。'},
+    {q:'「膜厚の不均一」が起きる主な原因と対策は？',cs:['塗料の色が原因','ガンの速度・距離・重ね幅の不一致が原因→練習と標準化で対策','塗料の価格が原因','天気が原因'],ok:1,ex:'膜厚不均一はガン速度・距離・オーバーラップ幅の変化で生じる。スプレーパターンを一定間隔で重ねる（50%オーバーラップ推奨）訓練と、試し吹きでの確認が基本対策。'},
+    {q:'「塗料の粘度調整」で温度が変わるとどうなるか？',cs:['温度に関係なく粘度は一定','温度が高いと粘度が下がり（希薄になる）、低いと上がる（濃くなる）','温度が高いほど粘度が上がる','粘度は一度調整すれば変わらない'],ok:1,ex:'塗料粘度は温度に敏感。冬季は粘度が上がりスプレーパターンが乱れやすい。夏季は粘度が下がりタレが発生しやすい。現場温度に合わせた希釈率の調整が必須。'},
+    {q:'「ISO 12944（重防食塗装）」のC5-M環境とは？',cs:['一般住宅の外壁','非常に腐食性が高い海岸・船舶環境の最高腐食環境カテゴリー','軽微な室内環境','コンクリート環境'],ok:1,ex:'ISO 12944はC1〜CX（旧C5-M）の腐食環境カテゴリーを定めた国際規格。C5は海岸・海上・化学工場等の非常に腐食性が高い環境。高性能防食塗装仕様の選定基準として世界で使われる。'},
+    {q:'「塗膜の付着性試験（クロスカット法）」のJIS規格は？',cs:['JIS K 5600-5-6','JIS A 1234','JIS B 4567','JIS C 2890'],ok:0,ex:'クロスカット法（碁盤目試験）はJIS K 5600-5-6で規定。1mm間隔の切れ目を6×6に入れテープで密着を確認する。0〜5の6段階で評価し、0が最良（剥離なし）。'},
+    {q:'「特殊塗料」の「遮熱塗料」の仕組みは？',cs:['塗膜が熱を発生させる','太陽光の近赤外線を高反射することで建物の温度上昇を抑制する','断熱材の代替になる','冷却効果で室温を下げる'],ok:1,ex:'遮熱塗料は太陽光の近赤外線（熱線）を高反射する特殊顔料を含み、屋根・外壁の表面温度上昇を抑える。省エネ・ヒートアイランド対策として使われる。'},
+    {q:'「塗装工事の品質記録」として保存すべき主な書類は？',cs:['特になし','施工記録・材料承認書・試験成績書・膜厚測定記録・工事写真'],ok:1,ex:'塗装工事の品質記録は施工記録（日付・気象・作業内容）・材料承認書・試験成績書・膜厚測定記録・工事写真が基本。竣工後のメンテナンス・トラブル対応の証拠になる。'},
+  ],
+  safety_painter:[
+    {q:'「特定化学物質（クロム酸塩系）」を含む旧塗膜の除去作業で必要な措置は？',cs:['通常の防じんマスクのみ','特定化学物質作業主任者の選任・保護具着用・廃棄物の特別管理が必要','特に特別措置は不要','水で洗えば良い'],ok:1,ex:'6価クロムなどの特定化学物質を含む旧塗膜の除去には特化則が適用。特定化学物質作業主任者の選任・呼吸用保護具（送気マスク等）・皮膚保護・廃棄物の特別管理が義務。'},
+    {q:'「静電気」が塗装現場で危険な理由は？',cs:['作業員に感電するから','溶剤蒸気に引火して火災・爆発を起こすリスクがあるから','塗料が飛散するから','作業効率が下がるから'],ok:1,ex:'静電気の放電（スパーク）が溶剤蒸気に着火すると爆発・火災が起きる。静電気対策：アース（接地）・導電性床・帯電防止服・湿度管理が必須。静電塗装機は別に安全対策が必要。'},
+    {q:'「高所作業車（ブーム式・バスケット式）」を操作するために必要な資格は？',cs:['特に資格不要','作業床高さ10m以上は「高所作業車運転技能講習」、10m未満は「特別教育」が必要','大型自動車免許のみ','フルハーネス講習のみ'],ok:1,ex:'高所作業車の操作は作業床高さ10m以上で技能講習、10m未満で特別教育が必要（労働安全衛生法）。無資格・無教育での操作は法令違反。'},
+    {q:'塗装現場で「爆発危険区域」の管理で正しいのは？',cs:['爆発危険区域での喫煙は許可の場合がある','爆発危険区域では防爆型機器のみ使用可・火気厳禁・帯電防止措置が必要','通常の電気機器でも問題ない','危険区域での作業は禁止'],ok:1,ex:'溶剤蒸気が滞留する爆発危険区域では防爆型電気機器（防爆照明・工具等）の使用が義務。火気・スパーク・静電気が全て着火源になりうる。換気で爆発下限界の25%以下に維持することが目標。'},
+    {q:'「有機溶剤中毒」の初期症状として正しいのは？',cs:['発熱・咳','頭痛・めまい・吐き気・意識障害','皮膚のかゆみのみ','視力低下のみ'],ok:1,ex:'有機溶剤中毒の初期症状は頭痛・めまい・吐き気・判断力低下・意識障害。密閉空間では重篤化・死亡事故につながる。症状が出たら直ちに新鮮な空気のある場所へ移動し医療機関へ。'},
+    {q:'「足場の安全基準」で手すりの設置が義務付けられる高さは？',cs:['1m以上','2m以上','3m以上','5m以上'],ok:1,ex:'労働安全衛生法により、高さ2m以上の足場には手すり（高さ85cm以上）・中さん（35〜50cm）・幅木（10cm以上）の設置が義務。2022年の改正で規制が強化された。'},
+    {q:'「MSDS（SDS：安全データシート）」を確認する目的は？',cs:['価格の確認','塗料の危険有害性・取扱方法・応急処置・廃棄方法を確認するため','色見本の確認','工期の確認'],ok:1,ex:'SDS（旧MSDS：Material Safety Data Sheet）は化学物質の危険有害性・適切な取扱方法・保護具・応急処置・廃棄方法を記載した文書。化管法・安衛法で主要化学品の提供が義務付けられている。'},
+    {q:'「密閉空間でのタンク内塗装」で最も重要な安全対策は？',cs:['できるだけ早く終わらせる','入場前の気体測定・強制換気・監視者配置・送気マスク着用・緊急救出体制の確立','1人での作業','普通のマスクで十分'],ok:1,ex:'タンク内塗装は酸素欠乏・有機溶剤蒸気・爆発のリスクが重なる最危険作業。入場前測定・強制換気（溶剤蒸気の爆発下限界以下に維持）・送気マスク・外部監視者・救出用具が全て必要。'},
+    {q:'「防じんマスク」と「防毒マスク」の使い分けは？',cs:['どちらも同じ効果','防じんは粉じん・ミスト用、防毒は有機溶剤等のガス・蒸気用。目的に応じた使い分けが必要','防毒の方が常に上位','防じんのみで十分'],ok:1,ex:'防じんマスクはフィルターで粒子（粉じん・塗料ミスト）を除去するが、ガス・蒸気は通過する。防毒マスクは吸収缶で有機溶剤等のガスを吸着除去。用途を間違えると全く保護されない。'},
+    {q:'「化学物質リスクアセスメント」が義務化されたのはいつからか？',cs:['1970年から','2016年（安衛法改正）から危険有害物質を扱う事業者に義務化','任意実施のみ','2030年から'],ok:1,ex:'2016年の労働安全衛生法改正により、危険有害化学物質（リスクアセスメント対象物質）を製造・取り扱う事業者にリスクアセスメントの実施が義務化された。塗料・溶剤もその対象。'},
+  ],
+  color_theory:[
+    {q:'「オストワルト表色系」の特徴は？',cs:['マンセル系と同じ','純色量・白色量・黒色量の3成分で色を表す表色系','光の三原色を基にした表色系','日本独自の表色系'],ok:1,ex:'オストワルト表色系は純色量（C）・白色量（W）・黒色量（K）の3成分で色を表す。C+W+K=100%の関係がある。マンセル系と並んで使われる代表的な表色系のひとつ。'},
+    {q:'「色の心理効果」で青系の色が使われる場所として最も適切なのは？',cs:['警告・禁止の標識','冷静・信頼のイメージが必要な場所（医療・金融等）','危険区域の床','熱を感じさせたい暖房設備'],ok:1,ex:'青は冷静・信頼・清潔のイメージを与える「後退色・寒色」。医療施設・金融機関・水回りの配色によく使われる。労働環境では青は「指示・情報」の安全色として使われる。'},
+    {q:'「演色性（CRI）」とは何か？',cs:['塗料の反射率','光源が色の見え方に影響する能力を示す指数（Ra値）','塗膜の耐候性指数','顔料の安定性指標'],ok:1,ex:'演色性（CRI/Ra値）は光源が自然光（太陽光）と比較してどれだけ正確に色を見せられるかの指数。Ra100が完全演色（太陽光相当）。塗装の色確認・色合わせはRa90以上の光源推奨。'},
+    {q:'「日本工業規格（JIS）」で塗料の色番号はどの体系が使われるか？',cs:['RGB体系','日本塗料工業会（日塗工）色票・マンセル体系が主に使われる','HSL体系','CMYK体系'],ok:1,ex:'国内塗装工事では日塗工（日本塗料工業会）の標準色票やマンセル値で色を指定することが多い。日塗工色票は3年有効で2年ごとに改訂される。現場の色合わせには最新版の使用が必要。'},
+    {q:'「光の三原色（加法混色）」で赤・緑・青を全て混ぜると何色になるか？',cs:['黒','灰色','白','黄色'],ok:2,ex:'光の加法混色は混ぜるほど明るくなり、赤（R）＋緑（G）＋青（B）の3原色を同強度で混ぜると白になる。ディスプレイ・照明の発色原理。塗料（減法混色）とは逆の性質。'},
+    {q:'「トーンオントーン配色」とは何か？',cs:['同じ色相で明度差をつけた配色','異なる色相を同じトーンで組み合わせる配色','補色のみの配色','無彩色のみの配色'],ok:0,ex:'トーンオントーンは同じ色相でトーン（明度・彩度の組み合わせ）を変えた配色。例：同じ青でもビビッドとペールを組み合わせる。統一感がありながら立体感・変化が生まれる。'},
+    {q:'「色の対比」で「明度対比」の説明として正しいのは？',cs:['同じ明度でも色相によって見え方が変わる','同じ灰色が暗い背景では明るく、明るい背景では暗く見える','彩度の高い色の対比','色相環の対比'],ok:1,ex:'明度対比は同じ明度の色でも隣接する色の明度差によって異なって見える現象。塗料の色合わせは周囲の色との対比を考慮して行う。白壁に合わせた色見本が現場で予想より暗く見えるケースはこれが原因。'},
+    {q:'「彩度対比」とは何か？',cs:['彩度の高い色と低い色を混ぜること','低彩度の色が高彩度の隣接色の影響でより鮮やかに見え、高彩度の色は逆に鈍く見える現象','同じ彩度の色が対比する現象','補色対比の別名'],ok:1,ex:'彩度対比は隣接する色の彩度の影響で見え方が変わる現象。低彩度（くすんだ）色は高彩度の隣に置くとより鮮やかに見え、高彩度色は逆に鈍く見える。色合わせには周辺色の影響を考慮する。'},
+    {q:'「塗料の隠蔽力に最も影響する顔料」として正しいのは？',cs:['有機顔料（赤・黄等）','酸化チタン（TiO₂：チタン白）','カーボンブラック','群青'],ok:1,ex:'酸化チタン（チタン白）は屈折率が最も高く、光の散乱効果で最強の隠蔽力を持つ白色顔料。白色塗料・着色塗料の隠蔽性はほぼチタン白の量で決まる。'},
+    {q:'「国際照明委員会（CIE）」のD65光源とは何か？',cs:['工場用照明の規格','昼光（北天空光）を模擬した国際標準光源（色温度約6504K）','暗室用照明','LED照明の規格'],ok:1,ex:'D65は昼光（晴れた日の北天空光）を模擬したCIE標準光源で色温度約6504K。色合わせ・色の評価には複数光源（D65・A・F）での確認が推奨される。塗料の色合わせの国際標準測定条件。'},
+  ],
+};
+
+// 追加問題をマージ
+Object.keys(SHIKAKU_EXTRA).forEach(id=>{
+  const exam=PAINTER_SHIKAKU.find(e=>e.id===id);
+  if(exam) exam.questions=[...exam.questions,...SHIKAKU_EXTRA[id]];
+});
+
+// ─────────────────────────────────────────────
+// SHIKAKU DOJO STATE
+// ─────────────────────────────────────────────
+let skExam=null, skQ=0, skScore=0, skHP=3, skAnswered=false, skQuestions=[];
+
+function initShikaku(){
+  const list=document.getElementById('shikaku-list');
+  if(!list) return;
+  list.innerHTML='';
+  PAINTER_SHIKAKU.forEach(exam=>{
+    const btn=document.createElement('div');
+    btn.style.cssText='background:#1e2d4a;border:1px solid rgba(255,255,255,0.1);border-left:4px solid '+exam.color+';border-radius:10px;padding:14px 16px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:12px;';
+    btn.innerHTML=`<div style="font-size:28px">${exam.icon}</div><div><div style="font-size:14px;font-weight:700;color:#fff">${lang==='en'?exam.name_en:exam.name}</div><div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:2px">${exam.desc} / ${exam.questions.length}問</div></div><div style="margin-left:auto;color:rgba(255,255,255,0.4)">▶</div>`;
+    btn.onclick=()=>skStart(exam.id);
+    list.appendChild(btn);
+  });
+}
+
+function skStart(id){
+  skExam=PAINTER_SHIKAKU.find(e=>e.id===id);
+  if(!skExam) return;
+  skQ=0; skScore=0; skHP=3; skAnswered=false;
+  skQuestions=shuffleArray([...skExam.questions]);
+  document.getElementById('shikaku-select').style.display='none';
+  document.getElementById('shikaku-battle').style.display='block';
+  document.getElementById('shikaku-result').style.display='none';
+  document.getElementById('sk-exam-label').textContent=skExam.name;
+  document.getElementById('sk-icon').textContent=skExam.icon;
+  document.getElementById('sk-hp').textContent='3';
+  document.getElementById('sk-score').textContent='0';
+  setTimeout(()=>skRender(),500);
+}
+
+function skRender(){
+  if(skQ>=skQuestions.length){skEnd(true);return;}
+  const q=skQuestions[skQ];
+  skAnswered=false;
+  document.getElementById('sk-qnum').textContent=`Q${skQ+1}/${skQuestions.length}`;
+  document.getElementById('sk-q').textContent=q.q;
+  const choicesEl=document.getElementById('sk-choices');
+  choicesEl.innerHTML='';
+  const idx=shuffleArray([0,1,2,3].slice(0,q.cs.length));
+  const newOk=idx.indexOf(q.ok);
+  idx.forEach((origIdx,dispIdx)=>{
+    const btn=document.createElement('button');
+    btn.style.cssText='width:100%;background:#1e2d4a;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:12px 14px;color:#fff;font-size:13px;text-align:left;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:8px;';
+    btn.innerHTML=`<span style="font-family:monospace;font-weight:700;color:${skExam.color}">${['A','B','C','D'][dispIdx]}</span>${q.cs[origIdx]}`;
+    btn.onclick=()=>skAnswer(dispIdx,newOk,q.ex);
+    choicesEl.appendChild(btn);
+  });
+  document.getElementById('sk-explain').style.display='none';
+  document.getElementById('sk-next').style.display='none';
+}
+
+function skAnswer(i,okIdx,explain){
+  if(skAnswered) return;
+  skAnswered=true;
+  const btns=document.querySelectorAll('#sk-choices button');
+  btns[okIdx].style.borderColor='#1A7A4A';btns[okIdx].style.background='rgba(26,122,74,0.3)';
+  if(i===okIdx){
+    skScore++; document.getElementById('sk-score').textContent=skScore;
+  } else {
+    btns[i].style.borderColor='#C0392B';btns[i].style.background='rgba(192,57,43,0.2)';
+    skHP--; document.getElementById('sk-hp').textContent=skHP;
+    if(skHP<=0){
+      document.getElementById('sk-explain').textContent=explain;
+      document.getElementById('sk-explain').style.display='block';
+      setTimeout(()=>skEnd(false),1500); return;
+    }
+  }
+  document.getElementById('sk-explain').textContent=explain;
+  document.getElementById('sk-explain').style.display='block';
+  document.getElementById('sk-next').style.display='block';
+  document.getElementById('sk-next').textContent=skQ+1>=skQuestions.length?'📊 結果へ':'次の問題 →';
+  setTimeout(()=>document.getElementById('sk-next').scrollIntoView({behavior:'smooth',block:'center'}),200);
+}
+
+function skNext(){
+  skQ++;
+  document.getElementById('sk-explain').style.display='none';
+  document.getElementById('sk-next').style.display='none';
+  if(skQ>=skQuestions.length) skEnd(true);
+  else skRender();
+}
+
+function skEnd(pass){
+  document.getElementById('shikaku-battle').style.display='none';
+  document.getElementById('shikaku-result').style.display='block';
+  const pct=skScore/skQuestions.length;
+  document.getElementById('sk-result-icon').textContent=pct>=0.6?'🎓':'📚';
+  document.getElementById('sk-result-title').textContent=pct>=0.6?'合格ライン達成！':'もう一度挑戦！';
+  document.getElementById('sk-result-title').style.color=pct>=0.6?'#F6D860':'#C0392B';
+  document.getElementById('sk-result-stats').innerHTML=`正解: <span style="color:#F6D860">${skScore}</span> / ${skQuestions.length}問<br>正答率: <span style="color:#F6D860">${Math.round(pct*100)}%</span>${pct===1?'<br><span style="color:#F6D860">🌟 PERFECT!</span>':pct>=0.8?'<br><span style="color:#F6D860">💪 優秀！</span>':''}`;
+}
+
+function skBackToSelect(){
+  document.getElementById('shikaku-select').style.display='block';
+  document.getElementById('shikaku-battle').style.display='none';
+  document.getElementById('shikaku-result').style.display='none';
+}
+
+function goShikaku(){
+  goPage('shikaku');
+  initShikaku();
+}
 
 
 const TEXT={
@@ -1299,8 +1650,11 @@ function goPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
   document.getElementById('pg-'+name).classList.add('on');
-  const pages=['home','color','safety','quiz','road','dict'];
-  document.querySelectorAll('.nav-btn')[pages.indexOf(name)].classList.add('on');
+  const pages=['home','color','safety','quiz','road','dict','shikaku'];
+  const idx=pages.indexOf(name);
+  if(idx>=0 && document.querySelectorAll('.nav-btn')[idx]){
+    document.querySelectorAll('.nav-btn')[idx].classList.add('on');
+  }
 }
 
 
