@@ -514,7 +514,7 @@ html,body{height:100%;background:#0f1521;font-family:Arial,sans-serif;color:#fff
       </div>
       <div style="padding:0 16px 10px;display:flex;gap:6px;flex-wrap:wrap" id="dict-cats"></div>
       <div style="padding:0 16px 4px">
-        <input id="dict-search" type="text" placeholder="🔍 検索..." style="width:100%;background:#1e2d4a;border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:9px 14px;color:#fff;font-size:13px;outline:none" oninput="filterDict()">
+        <input id="dict-search" type="text" placeholder="🔍 検索..." style="width:100%;background:#1e2d4a;border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:9px 14px;color:#fff;font-size:13px;outline:none">
       </div>
       <div id="dict-body" style="padding:8px 16px 16px"></div>
     </div>
@@ -857,6 +857,25 @@ const TEXT={
 // STATE
 // ─────────────────────────────────────────────
 let lang='ja', xp=0, colorIdx=0, quizIdx=0, quizAnswered=false;
+let shuffledQuizIndices=[], quizShufflePos=0;
+
+// シャッフル関数
+function shuffleArray(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+// 問題インデックスをシャッフルして初期化
+function initQuizShuffle(){
+  const len=QUIZ[lang].length;
+  shuffledQuizIndices=shuffleArray([...Array(len).keys()]);
+  quizShufflePos=0;
+  quizIdx=shuffledQuizIndices[0];
+}
 
 function getLv(){return xp<40?1:xp<80?2:3}
 
@@ -1239,7 +1258,13 @@ function answer(idx){
 }
 
 function nextQuiz(){
-  quizIdx=(quizIdx+1)%QUIZ[lang].length;
+  quizShufflePos++;
+  // 全問終わったら再シャッフル
+  if(quizShufflePos>=shuffledQuizIndices.length){
+    shuffledQuizIndices=shuffleArray([...Array(QUIZ[lang].length).keys()]);
+    quizShufflePos=0;
+  }
+  quizIdx=shuffledQuizIndices[quizShufflePos];
   renderQuiz();
 }
 
@@ -1252,6 +1277,7 @@ function setLang(l,btn){
   btn.classList.add('on');
   applyText();
   const sp=document.getElementById('dict-search'); if(sp) sp.placeholder=lang==='ja'?'🔍 検索...':'🔍 Search...';
+  initQuizShuffle(); // 言語切り替え時も再シャッフル
   renderSafety();
   renderQuiz();
   renderHintArea();
@@ -2080,6 +2106,7 @@ function toggleDict(idx){
 // ─────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────
+initQuizShuffle(); // 起動時にシャッフル初期化
 applyText();
 renderHeroPinto();
 loadColor();
@@ -2090,6 +2117,19 @@ renderRoad();
 renderDictCats();
 renderDict();
 updateXPBar();
+
+// iOS Safari対応: dict-search に addEventListener を使う
+(function(){
+  const input = document.getElementById('dict-search');
+  if(input){
+    ['input','keyup','compositionend'].forEach(evt=>{
+      input.addEventListener(evt, ()=>{
+        dictSearch = input.value.toLowerCase();
+        renderDict();
+      });
+    });
+  }
+})();
 </script>
 </body>
 </html>
